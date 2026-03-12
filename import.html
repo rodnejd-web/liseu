@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>수입차 장기리스 / 장기렌트 견적 계산기</title>
+<style>
+  :root {
+    --primary: #003087;
+    --primary-light: #0050c8;
+    --accent: #00aad4;
+    --bg: #f0f4fb;
+    --card: #ffffff;
+    --border: #dde2ef;
+    --text: #1a2236;
+    --text-muted: #6b7a9a;
+    --audi: #BB0A21;
+    --benz: #1a1a1a;
+    --bmw: #1C69D4;
+    --vw: #001E50;
+    --mini: #00A1DE;
+    --volvo: #003057;
+    --lexus: #1A1A1A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* ── HEADER ── */
+  .top-nav {
+    position: sticky; top: 0; z-index: 200;
+    background: #0a1628; display: flex; align-items: center; gap: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .top-nav a {
+    display: flex; align-items: center; gap: 7px;
+    padding: 13px 28px; font-size: 0.88rem; font-weight: 700;
+    color: rgba(255,255,255,0.55); text-decoration: none;
+    border-bottom: 3px solid transparent; transition: all 0.18s;
+  }
+  .top-nav a:hover { color: white; background: rgba(255,255,255,0.06); }
+  .top-nav a.active { color: white; border-bottom-color: #00aad4; background: rgba(0,170,212,0.1); }
+  .top-nav .nav-logo { padding: 13px 24px 13px 20px; font-size: 0.95rem; font-weight: 900; color: white; letter-spacing: -0.5px; border-right: 1px solid rgba(255,255,255,0.12); }
+
+  .site-header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 60%, var(--accent) 100%);
+    color: white; padding: 18px 32px; box-shadow: 0 4px 20px rgba(0,48,135,0.3);
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  .site-header h1 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px; }
+  .site-header p { font-size: 0.8rem; opacity: 0.82; margin-top: 2px; }
+
+  .container { max-width: 1160px; margin: 0 auto; padding: 28px 16px 80px; }
+
+  /* ── BRAND BAR ── */
+  .brand-bar {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px;
+  }
+  .brand-chip {
+    padding: 7px 16px; border-radius: 999px; border: 2px solid; font-size: 0.8rem;
+    font-weight: 700; cursor: pointer; transition: all 0.18s; background: white; user-select: none;
+  }
+  .brand-chip.active-audi   { background: var(--audi);  color: white; border-color: var(--audi); }
+  .brand-chip.active-benz   { background: var(--benz);  color: white; border-color: var(--benz); }
+  .brand-chip.active-bmw    { background: var(--bmw);   color: white; border-color: var(--bmw); }
+  .brand-chip.active-vw     { background: var(--vw);    color: white; border-color: var(--vw); }
+  .brand-chip.active-mini   { background: var(--mini);  color: white; border-color: var(--mini); }
+  .brand-chip.active-volvo  { background: var(--volvo); color: white; border-color: var(--volvo); }
+  .brand-chip.active-lexus  { background: var(--lexus); color: white; border-color: var(--lexus); }
+  .brand-chip[data-brand="아우디"]    { border-color: var(--audi);  color: var(--audi); }
+  .brand-chip[data-brand="벤츠"]      { border-color: var(--benz);  color: var(--benz); }
+  .brand-chip[data-brand="BMW"]       { border-color: var(--bmw);   color: var(--bmw); }
+  .brand-chip[data-brand="폭스바겐"] { border-color: var(--vw);    color: var(--vw); }
+  .brand-chip[data-brand="미니"]      { border-color: var(--mini);  color: var(--mini); }
+  .brand-chip[data-brand="볼보"]      { border-color: var(--volvo); color: var(--volvo); }
+  .brand-chip[data-brand="렉서스"]   { border-color: var(--lexus); color: var(--lexus); }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card); border-radius: 16px; border: 1px solid var(--border);
+    padding: 22px 24px; box-shadow: 0 2px 14px rgba(0,0,0,0.05);
+  }
+  .card-title {
+    font-size: 0.95rem; font-weight: 800; color: var(--primary);
+    margin-bottom: 16px; padding-bottom: 11px; border-bottom: 2px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title::before {
+    content: ''; display: inline-block; width: 4px; height: 17px;
+    background: var(--primary); border-radius: 2px; flex-shrink: 0;
+  }
+
+  /* ── LAYOUT ── */
+  .top-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+  @media (max-width: 820px) { .top-grid { grid-template-columns: 1fr; } }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .form-row.single { grid-template-columns: 1fr; }
+  .form-row.triple { grid-template-columns: 1fr 1fr 1fr; }
+  @media (max-width: 480px) { .form-row, .form-row.triple { grid-template-columns: 1fr; } }
+
+  label { display: block; font-size: 0.77rem; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; }
+  select, input[type="number"] {
+    width: 100%; padding: 9px 12px; border: 1.5px solid var(--border);
+    border-radius: 8px; font-size: 0.9rem; color: var(--text); background: #f9fafc;
+    transition: border-color 0.18s, box-shadow 0.18s; outline: none; appearance: none;
+    font-family: inherit;
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7a9a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px;
+  }
+  select:focus, input:focus { border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(0,80,200,0.1); background: #fff; }
+  select:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: linear-gradient(135deg, #eef2ff, #f0f9ff);
+    border: 1px solid #c7d2fe; border-radius: 10px; padding: 13px 16px; margin-top: 14px;
+  }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .info-item label { color: #4b5fa0; font-size: 0.73rem; }
+  .info-item .value { font-size: 0.97rem; font-weight: 800; color: var(--primary); margin-top: 1px; }
+
+  /* ── OPTIONS ── */
+  .options-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  }
+  @media (max-width: 700px) { .options-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 420px) { .options-grid { grid-template-columns: 1fr; } }
+
+  .opt-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 11px; border-radius: 8px; border: 1.5px solid var(--border);
+    cursor: pointer; transition: all 0.15s; background: #f9fafc; user-select: none;
+  }
+  .opt-item:hover { border-color: var(--primary-light); background: #eff4ff; }
+  .opt-item input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--primary); flex-shrink: 0; }
+  .opt-item.checked { border-color: var(--primary); background: #eef2ff; }
+  .opt-name { font-size: 0.78rem; font-weight: 600; color: var(--text); flex: 1; line-height: 1.3; }
+  .opt-price { font-size: 0.73rem; color: var(--primary); font-weight: 700; white-space: nowrap; }
+
+  .option-total-bar {
+    margin-top: 12px; padding: 10px 14px; background: #eef2ff; border-radius: 8px;
+    display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem;
+  }
+  .option-total-bar .ot-label { font-weight: 600; color: var(--text-muted); }
+  .option-total-bar .ot-value { font-weight: 800; font-size: 1rem; color: var(--primary); }
+
+  /* ── CALC BUTTON ── */
+  .calc-btn {
+    width: 100%; padding: 14px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 800;
+    cursor: pointer; margin-top: 18px; transition: opacity 0.18s, transform 0.1s;
+    letter-spacing: 0.3px; font-family: inherit;
+  }
+  .calc-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  .calc-btn:active { transform: translateY(0); }
+
+  /* ── RESULT TABS ── */
+  .result-section { margin-top: 26px; }
+  .result-tabs { display: flex; gap: 0; border-radius: 12px 12px 0 0; overflow: hidden; border: 1px solid var(--border); border-bottom: none; }
+  .tab-btn {
+    flex: 1; padding: 11px 6px; background: #ecf0f7; border: none; font-size: 0.83rem;
+    font-weight: 700; color: var(--text-muted); cursor: pointer; transition: background 0.2s, color 0.2s;
+    font-family: inherit; border-right: 1px solid var(--border);
+  }
+  .tab-btn:last-child { border-right: none; }
+  .tab-btn.active { background: var(--card); color: var(--primary); }
+  .tab-content { display: none; background: var(--card); border: 1px solid var(--border); border-top: none; border-radius: 0 0 12px 12px; padding: 22px; }
+  .tab-content.active { display: block; }
+
+  /* ── TABLES ── */
+  .result-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+  .result-table th { background: #f0f4ff; color: var(--primary); font-weight: 800; padding: 10px 12px; text-align: center; border: 1px solid var(--border); font-size: 0.83rem; }
+  .result-table td { padding: 9px 12px; border: 1px solid var(--border); text-align: right; }
+  .result-table td:first-child { text-align: left; font-weight: 600; color: var(--text-muted); font-size: 0.82rem; }
+  .result-table tr:hover td { background: #f8faff; }
+  .result-table .highlight td { background: #fffbeb; }
+  .result-table .total-row td { background: #eef2ff; font-weight: 800; color: var(--primary); border-top: 2px solid var(--primary-light); }
+  .amount-big { font-size: 1rem; font-weight: 800; color: var(--primary); }
+  .tbl-wrap { overflow-x: auto; }
+
+  /* ── COMPARE CARDS ── */
+  .compare-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; }
+  @media (max-width: 600px) { .compare-grid { grid-template-columns: 1fr; } }
+
+  .compare-card { border-radius: 12px; padding: 18px; border: 2px solid var(--border); text-align: center; }
+  .compare-card.lease-fin { border-color: #3b82f6; background: linear-gradient(135deg, #eff6ff, #fff); }
+  .compare-card.lease-op  { border-color: #8b5cf6; background: linear-gradient(135deg, #f5f3ff, #fff); }
+  .compare-card.rent      { border-color: #10b981; background: linear-gradient(135deg, #ecfdf5, #fff); }
+  .compare-card .cc-label { font-size: 0.75rem; font-weight: 700; margin-bottom: 4px; }
+  .compare-card.lease-fin .cc-label { color: #3b82f6; }
+  .compare-card.lease-op  .cc-label { color: #8b5cf6; }
+  .compare-card.rent      .cc-label { color: #10b981; }
+  .compare-card .cc-monthly { font-size: 1.45rem; font-weight: 900; margin: 5px 0 2px; }
+  .compare-card.lease-fin .cc-monthly { color: #1d4ed8; }
+  .compare-card.lease-op  .cc-monthly { color: #6d28d9; }
+  .compare-card.rent      .cc-monthly { color: #047857; }
+  .compare-card .cc-sub { font-size: 0.75rem; color: var(--text-muted); }
+
+  /* ── DIFF TABLE ── */
+  .diff-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .diff-table th { background: #f4f6fb; padding: 9px 12px; border: 1px solid var(--border); font-weight: 800; text-align: center; color: var(--text-muted); font-size: 0.79rem; }
+  .diff-table td { padding: 9px 12px; border: 1px solid var(--border); vertical-align: top; line-height: 1.45; }
+  .diff-table td:first-child { font-weight: 700; color: var(--text); background: #f9fafc; font-size: 0.8rem; }
+  .diff-table .fin { color: #1d4ed8; }
+  .diff-table .op  { color: #6d28d9; }
+  .diff-table .rnt { color: #047857; }
+
+  /* ── SUMMARY BOXES ── */
+  .summary-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+  @media (max-width: 600px) { .summary-row { grid-template-columns: 1fr; } }
+  .summary-box { background: #f9fafc; border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .summary-box h4 { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .summary-box .sb-row { display: flex; justify-content: space-between; align-items: baseline; padding: 3px 0; font-size: 0.82rem; border-bottom: 1px dashed #e5e7eb; }
+  .summary-box .sb-row:last-child { border-bottom: none; }
+  .summary-box .sb-key { color: var(--text-muted); }
+  .summary-box .sb-val { font-weight: 700; color: var(--text); }
+  .summary-box .sb-total { background: #eef2ff; border-radius: 6px; padding: 5px 10px; margin-top: 6px; display: flex; justify-content: space-between; font-weight: 800; color: var(--primary); font-size: 0.88rem; }
+
+  /* ── NOTICE ── */
+  .notice {
+    background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px;
+    padding: 11px 15px; font-size: 0.78rem; color: #92400e; margin-top: 14px; line-height: 1.65;
+  }
+
+  /* ── SECTION HEADING ── */
+  .sec-heading {
+    font-size: 0.88rem; font-weight: 800; color: var(--text-muted); margin: 20px 0 10px;
+    padding-bottom: 6px; border-bottom: 1px dashed var(--border);
+  }
+
+  /* ── EMPTY / LOADING ── */
+  .empty-state { text-align: center; padding: 44px 20px; color: var(--text-muted); font-size: 0.95rem; }
+  .empty-state .icon { font-size: 3.2rem; margin-bottom: 14px; }
+
+  /* ── RANGE SLIDER ── */
+  input[type="range"] {
+    width: 100%; accent-color: var(--primary); cursor: pointer; margin-top: 4px;
+  }
+  .range-row { margin-bottom: 14px; }
+  .range-row label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .range-row .rval { font-weight: 800; color: var(--primary); font-size: 0.88rem; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-thumb { background: #c5cde0; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <span class="nav-logo">🚗 리스·렌트 계산기</span>
+  <a href="index.html">🇰🇷 국산차</a>
+  <a href="import.html" class="active">🌍 수입차</a>
+</nav>
+<header class="site-header">
+  <div>
+    <h1>수입차 장기리스 / 장기렌트 견적 계산기</h1>
+    <p>아우디·벤츠·BMW·폭스바겐·미니·볼보·렉서스 전 차종 월 납입금 비교</p>
+  </div>
+  <div style="font-size:0.72rem;opacity:0.7;text-align:right;line-height:1.5;">2024~2025 기준가<br>참고용 계산기</div>
+</header>
+
+<div class="container">
+
+  <!-- BRAND SELECTOR -->
+  <div class="brand-bar" id="brandBar">
+    <button class="brand-chip" data-brand="아우디"    onclick="selectBrand('아우디',this)">아우디</button>
+    <button class="brand-chip" data-brand="벤츠"      onclick="selectBrand('벤츠',this)">벤츠</button>
+    <button class="brand-chip" data-brand="BMW"       onclick="selectBrand('BMW',this)">BMW</button>
+    <button class="brand-chip" data-brand="폭스바겐" onclick="selectBrand('폭스바겐',this)">폭스바겐</button>
+    <button class="brand-chip" data-brand="미니"      onclick="selectBrand('미니',this)">미니</button>
+    <button class="brand-chip" data-brand="볼보"      onclick="selectBrand('볼보',this)">볼보</button>
+    <button class="brand-chip" data-brand="렉서스"   onclick="selectBrand('렉서스',this)">렉서스</button>
+  </div>
+
+  <div class="top-grid">
+
+    <!-- 차량 선택 -->
+    <div class="card">
+      <div class="card-title" id="brandLabel">차량 정보</div>
+      <div class="form-row">
+        <div>
+          <label>모델</label>
+          <select id="carModel" onchange="updateTrims()" disabled>
+            <option value="">브랜드를 먼저 선택하세요</option>
+          </select>
+        </div>
+        <div>
+          <label>트림 / 등급</label>
+          <select id="carTrim" onchange="updateCarInfo()" disabled>
+            <option value="">모델을 먼저 선택하세요</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Car Info Box -->
+      <div class="info-box" id="carInfoBox" style="display:none;">
+        <div class="info-grid">
+          <div class="info-item"><label>기본 가격</label><div class="value" id="basePrice">-</div></div>
+          <div class="info-item"><label>차량 총 가격</label><div class="value" id="totalPrice">-</div></div>
+          <div class="info-item"><label>엔진 / 연료</label><div class="value" id="engineType">-</div></div>
+          <div class="info-item"><label>배기량 / 구동방식</label><div class="value" id="displacement">-</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 계약 조건 -->
+    <div class="card">
+      <div class="card-title">계약 조건</div>
+
+      <div class="range-row">
+        <label>선수금율 <span id="downPayRateLabel" class="rval">0%</span></label>
+        <input type="range" id="downPayRate" value="0" min="0" max="50" step="5" oninput="syncRange('downPayRate','downPayRateLabel','downPayRateNum','%'); updateConditions();">
+        <div style="display:flex;gap:8px;margin-top:6px;">
+          <input type="number" id="downPayRateNum" value="0" min="0" max="50" step="5" oninput="syncNum('downPayRate','downPayRateLabel','downPayRateNum','%'); updateConditions();" style="width:90px;font-size:0.83rem;padding:6px 8px;">
+          <span style="line-height:32px;font-size:0.8rem;color:var(--text-muted)">% &nbsp;=&nbsp;</span>
+          <div id="downPayAmt" style="flex:1;line-height:32px;font-size:0.88rem;font-weight:800;color:var(--primary)">-</div>
+        </div>
+      </div>
+
+      <div class="range-row">
+        <label>보증금율 <span id="depositRateLabel" class="rval">30%</span></label>
+        <input type="range" id="depositRate" value="30" min="0" max="50" step="5" oninput="syncRange('depositRate','depositRateLabel','depositRateNum','%'); updateConditions();">
+        <div style="display:flex;gap:8px;margin-top:6px;">
+          <input type="number" id="depositRateNum" value="30" min="0" max="50" step="5" oninput="syncNum('depositRate','depositRateLabel','depositRateNum','%'); updateConditions();" style="width:90px;font-size:0.83rem;padding:6px 8px;">
+          <span style="line-height:32px;font-size:0.8rem;color:var(--text-muted)">% &nbsp;=&nbsp;</span>
+          <div id="depositAmt" style="flex:1;line-height:32px;font-size:0.88rem;font-weight:800;color:var(--primary)">-</div>
+        </div>
+      </div>
+
+      <div class="range-row">
+        <label>잔존가치율 <span id="residualRateLabel" class="rval">30%</span></label>
+        <input type="range" id="residualRate" value="30" min="0" max="60" step="5" oninput="syncRange('residualRate','residualRateLabel','residualRateNum','%'); updateConditions();">
+        <div style="display:flex;gap:8px;margin-top:6px;">
+          <input type="number" id="residualRateNum" value="30" min="0" max="60" step="5" oninput="syncNum('residualRate','residualRateLabel','residualRateNum','%'); updateConditions();" style="width:90px;font-size:0.83rem;padding:6px 8px;">
+          <span style="line-height:32px;font-size:0.8rem;color:var(--text-muted)">% &nbsp;=&nbsp;</span>
+          <div id="residualAmt" style="flex:1;line-height:32px;font-size:0.88rem;font-weight:800;color:var(--primary)">-</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label>적용 이자율 (%)</label>
+          <input type="number" id="interestRate" value="5.5" min="0" max="20" step="0.1" oninput="updateConditions()">
+        </div>
+        <div>
+          <label>약정 주행거리 (km/년)</label>
+          <select id="mileage">
+            <option value="10000">10,000 km/년</option>
+            <option value="20000" selected>20,000 km/년</option>
+            <option value="30000">30,000 km/년</option>
+            <option value="40000">40,000 km/년</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-top:4px;">
+        <div style="grid-column:1/-1;">
+          <label>영업사원 수수료율 (%) <span style="color:#e53935;font-size:0.75rem;">※ 차량 총가격 기준, 월 납입금에 분할 포함</span></label>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <input type="number" id="commissionRate" value="0" min="0" max="10" step="0.1"
+              style="flex:1;" oninput="updateCommissionDisplay()">
+            <span id="commissionDisplay" style="min-width:130px;font-size:0.88rem;font-weight:700;color:#e53935;white-space:nowrap;">0 원</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="calc-btn" onclick="calculate()">견적 계산하기</button>
+    </div>
+  </div>
+
+  <!-- OPTIONS SECTION -->
+  <div class="card" style="margin-bottom:18px;">
+    <div class="card-title">선택 옵션 <span style="font-size:0.78rem;color:var(--text-muted);font-weight:500;">(옵션을 선택하면 차량 총 가격에 자동 반영됩니다 단 실제 옵션과는 매우 다르니, 옵션가격만 맞춰서 참고해주세요)</span></div>
+    <div class="options-grid" id="optionsGrid">
+      <!-- rendered by JS -->
+    </div>
+    <div class="option-total-bar">
+      <span class="ot-label">선택 옵션 합계</span>
+      <span class="ot-value" id="optionTotal">0 원</span>
+    </div>
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div id="emptyState" class="card">
+    <div class="empty-state">
+      <div class="icon">&#128663;</div>
+      <p><strong>브랜드와 차량을 선택하고 견적 계산하기를 눌러주세요</strong></p>
+      <p style="margin-top:8px;font-size:0.85rem;">장기리스(금융/운용)와 장기렌트의 월 납입금을 36/48/60개월로 비교합니다</p>
+      <p style="margin-top:14px;font-size:0.75rem;color:#b0b8d0;">차량 가격은 2024~2025년 기준 참고가격이며 실제 딜러 및 계약 조건에 따라 다를 수 있습니다</p>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="result-section" id="resultSection" style="display:none;">
+    <div class="result-tabs">
+      <button class="tab-btn active" onclick="showTab('lease')">장기리스 견적</button>
+      <button class="tab-btn" onclick="showTab('rent')">장기렌트 견적</button>
+      <button class="tab-btn" onclick="showTab('compare')">리스 vs 렌트 비교</button>
+      <button class="tab-btn" onclick="showTab('installment')">💳 할부 계산</button>
+    </div>
+    <div id="tab-lease"       class="tab-content active"><div id="leaseContent"></div></div>
+    <div id="tab-rent"        class="tab-content"><div id="rentContent"></div></div>
+    <div id="tab-compare"     class="tab-content"><div id="compareContent"></div></div>
+    <div id="tab-installment" class="tab-content"><div id="installmentContent"></div></div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+/* ================================================================
+   CAR DATA
+================================================================ */
+const CAR_DATA = {
+  "아우디": {
+    "A3": [
+      {trim:"스포트백 35 TFSI", engine:"가솔린 1.5T", drive:"2WD", price:40900000, cc:1498},
+      {trim:"스포트백 40 TFSI", engine:"가솔린 2.0T", drive:"2WD", price:48900000, cc:1984},
+    ],
+    "A4": [
+      {trim:"35 TFSI",  engine:"가솔린 1.5T", drive:"2WD", price:51900000, cc:1498},
+      {trim:"40 TFSI",  engine:"가솔린 2.0T", drive:"2WD", price:58900000, cc:1984},
+      {trim:"40 TDI",   engine:"디젤 2.0T",   drive:"2WD", price:58900000, cc:1968},
+      {trim:"S4",       engine:"가솔린 3.0T", drive:"AWD", price:85900000, cc:2894},
+    ],
+    "A5": [
+      {trim:"40 TFSI",  engine:"가솔린 2.0T", drive:"2WD", price:63900000, cc:1984},
+      {trim:"45 TFSI",  engine:"가솔린 2.0T", drive:"AWD", price:72900000, cc:1984},
+    ],
+    "A6": [
+      {trim:"40 TFSI",  engine:"가솔린 2.0T", drive:"2WD", price:67900000, cc:1984},
+      {trim:"45 TFSI",  engine:"가솔린 2.0T", drive:"AWD", price:77900000, cc:1984},
+      {trim:"55 TFSI",  engine:"가솔린 3.0T", drive:"AWD", price:92900000, cc:2894},
+      {trim:"40 TDI",   engine:"디젤 2.0T",   drive:"2WD", price:68900000, cc:1968},
+      {trim:"45 TDI",   engine:"디젤 3.0T",   drive:"AWD", price:81900000, cc:2967},
+    ],
+    "A7": [
+      {trim:"45 TFSI",  engine:"가솔린 2.0T", drive:"AWD", price:96900000,  cc:1984},
+      {trim:"55 TFSI",  engine:"가솔린 3.0T", drive:"AWD", price:112900000, cc:2894},
+    ],
+    "A8": [
+      {trim:"L 55 TFSI",    engine:"가솔린 3.0T", drive:"AWD", price:162000000, cc:2894},
+      {trim:"L 60 TFSI e",  engine:"PHEV 3.0T",   drive:"AWD", price:210000000, cc:2894},
+    ],
+    "Q3": [
+      {trim:"35 TFSI",  engine:"가솔린 1.5T", drive:"2WD", price:47900000, cc:1498},
+      {trim:"45 TFSI",  engine:"가솔린 2.0T", drive:"AWD", price:55900000, cc:1984},
+    ],
+    "Q4 e-tron": [
+      {trim:"40",           engine:"전기", drive:"2WD", price:64900000, cc:0},
+      {trim:"50 quattro",   engine:"전기", drive:"AWD", price:74900000, cc:0},
+    ],
+    "Q5": [
+      {trim:"40 TFSI",  engine:"가솔린 2.0T", drive:"AWD", price:67900000, cc:1984},
+      {trim:"45 TFSI",  engine:"가솔린 2.0T", drive:"AWD", price:75900000, cc:1984},
+      {trim:"40 TDI",   engine:"디젤 2.0T",   drive:"AWD", price:68900000, cc:1968},
+    ],
+    "Q7": [
+      {trim:"45 TFSI",  engine:"가솔린 2.0T", drive:"AWD", price:96900000,  cc:1984},
+      {trim:"55 TFSI",  engine:"가솔린 3.0T", drive:"AWD", price:111900000, cc:2894},
+      {trim:"45 TDI",   engine:"디젤 3.0T",   drive:"AWD", price:98900000,  cc:2967},
+    ],
+    "Q8": [
+      {trim:"55 TFSI",  engine:"가솔린 3.0T", drive:"AWD", price:125900000, cc:2894},
+      {trim:"50 TDI",   engine:"디젤 3.0T",   drive:"AWD", price:127900000, cc:2967},
+    ],
+    "e-tron GT": [
+      {trim:"e-tron GT",    engine:"전기", drive:"AWD", price:170000000, cc:0},
+      {trim:"RS e-tron GT", engine:"전기", drive:"AWD", price:218000000, cc:0},
+    ],
+    "Q8 e-tron": [
+      {trim:"50",  engine:"전기", drive:"AWD", price:119000000, cc:0},
+      {trim:"55",  engine:"전기", drive:"AWD", price:135000000, cc:0},
+    ],
+  },
+
+  "벤츠": {
+    "A클래스": [
+      {trim:"A 200",          engine:"가솔린 1.3T", drive:"2WD", price:44900000, cc:1332},
+      {trim:"A 200 4MATIC",   engine:"가솔린 1.3T", drive:"AWD", price:48900000, cc:1332},
+    ],
+    "C클래스": [
+      {trim:"C 200",            engine:"가솔린 1.5T", drive:"2WD", price:62900000, cc:1497},
+      {trim:"C 220d",           engine:"디젤 2.0T",   drive:"2WD", price:65900000, cc:1992},
+      {trim:"C 300 4MATIC",     engine:"가솔린 2.0T", drive:"AWD", price:72900000, cc:1999},
+      {trim:"C 300e 4MATIC",    engine:"PHEV 2.0T",   drive:"AWD", price:79900000, cc:1999},
+    ],
+    "E클래스": [
+      {trim:"E 200",            engine:"가솔린 2.0T", drive:"2WD", price:79900000,  cc:1999},
+      {trim:"E 220d",           engine:"디젤 2.0T",   drive:"2WD", price:82900000,  cc:1992},
+      {trim:"E 300 4MATIC",     engine:"가솔린 2.0T", drive:"AWD", price:89900000,  cc:1999},
+      {trim:"E 300e 4MATIC",    engine:"PHEV 2.0T",   drive:"AWD", price:96900000,  cc:1999},
+      {trim:"E 450 4MATIC",     engine:"가솔린 3.0T", drive:"AWD", price:112900000, cc:2999},
+    ],
+    "S클래스": [
+      {trim:"S 400d 4MATIC",    engine:"디젤 3.0T",   drive:"AWD", price:178900000, cc:2924},
+      {trim:"S 450 4MATIC",     engine:"가솔린 3.0T", drive:"AWD", price:180900000, cc:2999},
+      {trim:"S 580 4MATIC",     engine:"가솔린 4.0T", drive:"AWD", price:228900000, cc:3982},
+    ],
+    "GLA": [
+      {trim:"GLA 200",          engine:"가솔린 1.3T", drive:"2WD", price:52900000, cc:1332},
+      {trim:"GLA 200d",         engine:"디젤 2.0T",   drive:"2WD", price:55900000, cc:1950},
+      {trim:"GLA 250 4MATIC",   engine:"가솔린 2.0T", drive:"AWD", price:60900000, cc:1991},
+    ],
+    "GLC": [
+      {trim:"GLC 200",          engine:"가솔린 1.5T", drive:"2WD", price:74900000, cc:1497},
+      {trim:"GLC 220d",         engine:"디젤 2.0T",   drive:"2WD", price:77900000, cc:1992},
+      {trim:"GLC 300 4MATIC",   engine:"가솔린 2.0T", drive:"AWD", price:82900000, cc:1999},
+      {trim:"GLC 300e 4MATIC",  engine:"PHEV 2.0T",   drive:"AWD", price:89900000, cc:1999},
+    ],
+    "GLE": [
+      {trim:"GLE 300d 4MATIC",   engine:"디젤 2.0T",   drive:"AWD", price:105900000, cc:1950},
+      {trim:"GLE 450 4MATIC",    engine:"가솔린 3.0T", drive:"AWD", price:118900000, cc:2999},
+      {trim:"GLE 350de 4MATIC",  engine:"PHEV 2.0T",   drive:"AWD", price:121900000, cc:1950},
+    ],
+    "GLS": [
+      {trim:"GLS 400d 4MATIC",  engine:"디젤 3.0T",   drive:"AWD", price:167900000, cc:2924},
+      {trim:"GLS 450 4MATIC",   engine:"가솔린 3.0T", drive:"AWD", price:158900000, cc:2999},
+    ],
+    "EQA": [
+      {trim:"EQA 250",   engine:"전기", drive:"2WD", price:62900000, cc:0},
+      {trim:"EQA 250+",  engine:"전기", drive:"2WD", price:67900000, cc:0},
+    ],
+    "EQB": [
+      {trim:"EQB 250+",         engine:"전기", drive:"2WD", price:71900000, cc:0},
+      {trim:"EQB 350 4MATIC",   engine:"전기", drive:"AWD", price:80900000, cc:0},
+    ],
+    "EQE": [
+      {trim:"EQE 350+",         engine:"전기", drive:"2WD", price:112900000, cc:0},
+      {trim:"EQE 350 4MATIC",   engine:"전기", drive:"AWD", price:122900000, cc:0},
+    ],
+    "EQS": [
+      {trim:"EQS 450+",         engine:"전기", drive:"2WD", price:178900000, cc:0},
+      {trim:"EQS 580 4MATIC",   engine:"전기", drive:"AWD", price:215900000, cc:0},
+    ],
+  },
+
+  "BMW": {
+    "1시리즈": [
+      {trim:"118i",  engine:"가솔린 1.5T", drive:"2WD", price:42900000, cc:1499},
+      {trim:"120i",  engine:"가솔린 2.0T", drive:"2WD", price:47900000, cc:1998},
+    ],
+    "2시리즈": [
+      {trim:"220i 그란쿠페",     engine:"가솔린 2.0T", drive:"2WD", price:48900000, cc:1998},
+      {trim:"230i 쿠페",         engine:"가솔린 2.0T", drive:"2WD", price:62900000, cc:1998},
+      {trim:"M240i xDrive 쿠페", engine:"가솔린 3.0T", drive:"AWD", price:68900000, cc:2998},
+    ],
+    "3시리즈": [
+      {trim:"320i",        engine:"가솔린 2.0T", drive:"2WD", price:61900000,  cc:1998},
+      {trim:"330i",        engine:"가솔린 2.0T", drive:"2WD", price:69900000,  cc:1998},
+      {trim:"330i xDrive", engine:"가솔린 2.0T", drive:"AWD", price:73900000,  cc:1998},
+      {trim:"320d",        engine:"디젤 2.0T",   drive:"2WD", price:63900000,  cc:1995},
+      {trim:"330d",        engine:"디젤 3.0T",   drive:"2WD", price:74900000,  cc:2993},
+      {trim:"M3",          engine:"가솔린 3.0T", drive:"2WD", price:121900000, cc:2993},
+    ],
+    "4시리즈": [
+      {trim:"420i 그란쿠페",  engine:"가솔린 2.0T", drive:"2WD", price:65900000,  cc:1998},
+      {trim:"430i 쿠페",      engine:"가솔린 2.0T", drive:"2WD", price:74900000,  cc:1998},
+      {trim:"M440i xDrive",   engine:"가솔린 3.0T", drive:"AWD", price:93900000,  cc:2998},
+      {trim:"M4",             engine:"가솔린 3.0T", drive:"2WD", price:122900000, cc:2993},
+    ],
+    "5시리즈": [
+      {trim:"520i",        engine:"가솔린 2.0T", drive:"2WD", price:79900000,  cc:1998},
+      {trim:"530i xDrive", engine:"가솔린 2.0T", drive:"AWD", price:93900000,  cc:1998},
+      {trim:"520d",        engine:"디젤 2.0T",   drive:"2WD", price:82900000,  cc:1995},
+      {trim:"530d",        engine:"디젤 3.0T",   drive:"2WD", price:96900000,  cc:2993},
+      {trim:"550e xDrive", engine:"PHEV 3.0T",   drive:"AWD", price:114900000, cc:2998},
+      {trim:"M5",          engine:"가솔린 4.4T", drive:"AWD", price:205900000, cc:4395},
+    ],
+    "7시리즈": [
+      {trim:"730Ld",       engine:"디젤 3.0T",   drive:"2WD", price:152900000, cc:2993},
+      {trim:"740i",        engine:"가솔린 3.0T", drive:"2WD", price:162900000, cc:2998},
+      {trim:"760e xDrive", engine:"PHEV 3.0T",   drive:"AWD", price:206900000, cc:2998},
+    ],
+    "X1": [
+      {trim:"sDrive18i",   engine:"가솔린 1.5T", drive:"2WD", price:51900000, cc:1499},
+      {trim:"xDrive20i",   engine:"가솔린 2.0T", drive:"AWD", price:55900000, cc:1998},
+      {trim:"xDrive25e",   engine:"PHEV 1.5T",   drive:"AWD", price:66900000, cc:1499},
+    ],
+    "X3": [
+      {trim:"sDrive20i",   engine:"가솔린 2.0T", drive:"2WD", price:68900000, cc:1998},
+      {trim:"xDrive20i",   engine:"가솔린 2.0T", drive:"AWD", price:72900000, cc:1998},
+      {trim:"xDrive30i",   engine:"가솔린 2.0T", drive:"AWD", price:81900000, cc:1998},
+      {trim:"xDrive20d",   engine:"디젤 2.0T",   drive:"AWD", price:70900000, cc:1995},
+      {trim:"xDrive30d",   engine:"디젤 3.0T",   drive:"AWD", price:83900000, cc:2993},
+      {trim:"M40i",        engine:"가솔린 3.0T", drive:"AWD", price:97900000, cc:2998},
+    ],
+    "X5": [
+      {trim:"xDrive40i",   engine:"가솔린 3.0T", drive:"AWD", price:106900000, cc:2998},
+      {trim:"xDrive30d",   engine:"디젤 3.0T",   drive:"AWD", price:109900000, cc:2993},
+      {trim:"xDrive50e",   engine:"PHEV 3.0T",   drive:"AWD", price:118900000, cc:2998},
+      {trim:"M60i",        engine:"가솔린 4.4T", drive:"AWD", price:166900000, cc:4395},
+    ],
+    "X6": [
+      {trim:"xDrive40i",   engine:"가솔린 3.0T", drive:"AWD", price:118900000, cc:2998},
+      {trim:"xDrive30d",   engine:"디젤 3.0T",   drive:"AWD", price:122900000, cc:2993},
+      {trim:"M60i",        engine:"가솔린 4.4T", drive:"AWD", price:180900000, cc:4395},
+    ],
+    "iX": [
+      {trim:"xDrive40",  engine:"전기", drive:"AWD", price:101900000, cc:0},
+      {trim:"xDrive50",  engine:"전기", drive:"AWD", price:122900000, cc:0},
+      {trim:"M60",       engine:"전기", drive:"AWD", price:162900000, cc:0},
+    ],
+    "i4": [
+      {trim:"eDrive40",  engine:"전기", drive:"2WD", price:74900000,  cc:0},
+      {trim:"M50",       engine:"전기", drive:"AWD", price:103900000, cc:0},
+    ],
+    "i5": [
+      {trim:"eDrive40",      engine:"전기", drive:"2WD", price:92900000,  cc:0},
+      {trim:"M60 xDrive",    engine:"전기", drive:"AWD", price:134900000, cc:0},
+    ],
+  },
+
+  "폭스바겐": {
+    "골프": [
+      {trim:"1.5 TSI",  engine:"가솔린 1.5T", drive:"2WD", price:35990000, cc:1498},
+      {trim:"GTI",      engine:"가솔린 2.0T", drive:"2WD", price:47990000, cc:1984},
+      {trim:"R",        engine:"가솔린 2.0T", drive:"AWD", price:63990000, cc:1984},
+    ],
+    "폴로": [
+      {trim:"1.0 TSI",  engine:"가솔린 1.0T", drive:"2WD", price:27990000, cc:999},
+    ],
+    "아테온": [
+      {trim:"2.0 TSI 4MOTION",         engine:"가솔린 2.0T", drive:"AWD", price:55990000, cc:1984},
+      {trim:"Shooting Brake 2.0 TDI",  engine:"디젤 2.0T",   drive:"AWD", price:59990000, cc:1968},
+    ],
+    "티구안": [
+      {trim:"1.5 TSI",          engine:"가솔린 1.5T", drive:"2WD", price:42990000, cc:1498},
+      {trim:"2.0 TSI",          engine:"가솔린 2.0T", drive:"2WD", price:49990000, cc:1984},
+      {trim:"2.0 TSI 4MOTION",  engine:"가솔린 2.0T", drive:"AWD", price:55990000, cc:1984},
+      {trim:"2.0 TDI 4MOTION",  engine:"디젤 2.0T",   drive:"AWD", price:55990000, cc:1968},
+    ],
+    "투아렉": [
+      {trim:"3.0 V6 TDI",  engine:"디젤 3.0T",   drive:"AWD", price:82990000, cc:2967},
+      {trim:"3.0 V6 TSI",  engine:"가솔린 3.0T", drive:"AWD", price:84990000, cc:2995},
+    ],
+    "ID.4": [
+      {trim:"Pro",           engine:"전기", drive:"2WD", price:55990000, cc:0},
+      {trim:"Pro S",         engine:"전기", drive:"2WD", price:61990000, cc:0},
+      {trim:"Pro S 4MOTION", engine:"전기", drive:"AWD", price:67990000, cc:0},
+    ],
+    "ID.7": [
+      {trim:"Pro",   engine:"전기", drive:"2WD", price:64990000, cc:0},
+      {trim:"Pro S", engine:"전기", drive:"2WD", price:71990000, cc:0},
+    ],
+  },
+
+  "미니": {
+    "해치백 3도어": [
+      {trim:"Cooper",             engine:"가솔린 1.5T", drive:"2WD", price:37900000, cc:1499},
+      {trim:"Cooper S",           engine:"가솔린 2.0T", drive:"2WD", price:43900000, cc:1998},
+      {trim:"John Cooper Works",  engine:"가솔린 2.0T", drive:"2WD", price:57900000, cc:1998},
+    ],
+    "해치백 5도어": [
+      {trim:"Cooper",   engine:"가솔린 1.5T", drive:"2WD", price:40900000, cc:1499},
+      {trim:"Cooper S", engine:"가솔린 2.0T", drive:"2WD", price:47900000, cc:1998},
+    ],
+    "카브리오": [
+      {trim:"Cooper",   engine:"가솔린 1.5T", drive:"2WD", price:45900000, cc:1499},
+      {trim:"Cooper S", engine:"가솔린 2.0T", drive:"2WD", price:52900000, cc:1998},
+    ],
+    "컨트리맨": [
+      {trim:"Cooper",             engine:"가솔린 1.5T", drive:"2WD", price:49900000, cc:1499},
+      {trim:"Cooper S",           engine:"가솔린 2.0T", drive:"AWD", price:56900000, cc:1998},
+      {trim:"John Cooper Works",  engine:"가솔린 2.0T", drive:"AWD", price:72900000, cc:1998},
+      {trim:"SE ALL4",            engine:"전기",         drive:"AWD", price:66900000, cc:0},
+    ],
+    "쿠퍼만(Clubman)": [
+      {trim:"Cooper S ALL4",          engine:"가솔린 2.0T", drive:"AWD", price:54900000, cc:1998},
+      {trim:"John Cooper Works ALL4", engine:"가솔린 2.0T", drive:"AWD", price:67900000, cc:1998},
+    ],
+  },
+
+  "볼보": {
+    "S60": [
+      {trim:"B4 AWD",          engine:"하이브리드 2.0T", drive:"AWD", price:57900000, cc:1969},
+      {trim:"B5 AWD",          engine:"하이브리드 2.0T", drive:"AWD", price:64900000, cc:1969},
+      {trim:"Recharge T8 AWD", engine:"PHEV 2.0T",       drive:"AWD", price:76900000, cc:1969},
+    ],
+    "S90": [
+      {trim:"B5 AWD",          engine:"하이브리드 2.0T", drive:"AWD", price:76900000, cc:1969},
+      {trim:"B6 AWD",          engine:"하이브리드 2.0T", drive:"AWD", price:87900000, cc:1969},
+      {trim:"Recharge T8 AWD", engine:"PHEV 2.0T",       drive:"AWD", price:98900000, cc:1969},
+    ],
+    "V60 Cross Country": [
+      {trim:"B5 AWD",  engine:"하이브리드 2.0T", drive:"AWD", price:66900000, cc:1969},
+    ],
+    "XC40": [
+      {trim:"B3",             engine:"하이브리드 1.5T", drive:"2WD", price:51900000, cc:1477},
+      {trim:"B4 AWD",         engine:"하이브리드 2.0T", drive:"AWD", price:58900000, cc:1969},
+      {trim:"Recharge Single",engine:"전기",             drive:"2WD", price:64900000, cc:0},
+      {trim:"Recharge Twin",  engine:"전기",             drive:"AWD", price:72900000, cc:0},
+    ],
+    "XC60": [
+      {trim:"B4",             engine:"하이브리드 2.0T", drive:"2WD", price:64900000, cc:1969},
+      {trim:"B5 AWD",         engine:"하이브리드 2.0T", drive:"AWD", price:72900000, cc:1969},
+      {trim:"B6 AWD",         engine:"하이브리드 2.0T", drive:"AWD", price:80900000, cc:1969},
+      {trim:"Recharge T8 AWD",engine:"PHEV 2.0T",       drive:"AWD", price:86900000, cc:1969},
+    ],
+    "XC90": [
+      {trim:"B5 AWD",          engine:"하이브리드 2.0T", drive:"AWD", price:89900000,  cc:1969},
+      {trim:"B6 AWD",          engine:"하이브리드 2.0T", drive:"AWD", price:99900000,  cc:1969},
+      {trim:"Recharge T8 AWD", engine:"PHEV 2.0T",       drive:"AWD", price:110900000, cc:1969},
+    ],
+    "EX30": [
+      {trim:"Single Motor",  engine:"전기", drive:"2WD", price:52900000, cc:0},
+      {trim:"Twin Motor",    engine:"전기", drive:"AWD", price:64900000, cc:0},
+    ],
+    "EX40": [
+      {trim:"Single Motor",    engine:"전기", drive:"2WD", price:63900000, cc:0},
+      {trim:"Twin Motor AWD",  engine:"전기", drive:"AWD", price:73900000, cc:0},
+    ],
+    "EC40": [
+      {trim:"Single Motor",    engine:"전기", drive:"2WD", price:64900000, cc:0},
+      {trim:"Twin Motor AWD",  engine:"전기", drive:"AWD", price:74900000, cc:0},
+    ],
+  },
+
+  "렉서스": {
+    "UX": [
+      {trim:"UX 250h",   engine:"하이브리드 2.0", drive:"2WD", price:45000000, cc:1987},
+      {trim:"UX 300e",   engine:"전기",            drive:"2WD", price:55000000, cc:0},
+    ],
+    "IS": [
+      {trim:"IS 300h",       engine:"하이브리드 2.5", drive:"2WD", price:58000000, cc:2494},
+      {trim:"IS 300 AWD",    engine:"가솔린 2.0T",    drive:"AWD", price:62000000, cc:1998},
+      {trim:"IS 500 F SPORT",engine:"가솔린 5.0",     drive:"2WD", price:83000000, cc:4969},
+    ],
+    "ES": [
+      {trim:"ES 250",           engine:"가솔린 2.5",     drive:"2WD", price:54000000, cc:2494},
+      {trim:"ES 300h",          engine:"하이브리드 2.5", drive:"2WD", price:60000000, cc:2494},
+      {trim:"ES 300h F SPORT",  engine:"하이브리드 2.5", drive:"2WD", price:64000000, cc:2494},
+      {trim:"ES 350",           engine:"가솔린 3.5",     drive:"2WD", price:67000000, cc:3456},
+    ],
+    "LS": [
+      {trim:"LS 500h AWD",  engine:"하이브리드 3.5", drive:"AWD", price:158000000, cc:3456},
+      {trim:"LS 500 AWD",   engine:"가솔린 3.5T",    drive:"AWD", price:150000000, cc:3444},
+    ],
+    "NX": [
+      {trim:"NX 250",    engine:"가솔린 2.5",     drive:"2WD", price:58000000, cc:2494},
+      {trim:"NX 350h",   engine:"하이브리드 2.5", drive:"AWD", price:64000000, cc:2494},
+      {trim:"NX 350",    engine:"가솔린 2.4T",    drive:"AWD", price:62000000, cc:2393},
+      {trim:"NX 450h+",  engine:"PHEV 2.5",       drive:"AWD", price:74000000, cc:2487},
+    ],
+    "RX": [
+      {trim:"RX 350",        engine:"가솔린 2.4T",    drive:"AWD", price:74000000, cc:2393},
+      {trim:"RX 350h",       engine:"하이브리드 2.5", drive:"AWD", price:80000000, cc:2487},
+      {trim:"RX 450h+",      engine:"PHEV 2.5",       drive:"AWD", price:87000000, cc:2487},
+      {trim:"RX 500h F SPORT",engine:"하이브리드 2.4T",drive:"AWD",price:99000000, cc:2393},
+    ],
+    "GX": [
+      {trim:"GX 550",            engine:"가솔린 3.4T", drive:"AWD", price:96000000,  cc:3445},
+      {trim:"GX 550 Overtrail+", engine:"가솔린 3.4T", drive:"AWD", price:106000000, cc:3445},
+    ],
+    "LX": [
+      {trim:"LX 600",         engine:"가솔린 3.4T", drive:"AWD", price:165000000, cc:3445},
+      {trim:"LX 600 F SPORT", engine:"가솔린 3.4T", drive:"AWD", price:183000000, cc:3445},
+    ],
+    "LC": [
+      {trim:"LC 500",   engine:"가솔린 5.0",     drive:"2WD", price:165000000, cc:4969},
+      {trim:"LC 500h",  engine:"하이브리드 3.5", drive:"2WD", price:150000000, cc:3456},
+    ],
+    "RZ": [
+      {trim:"RZ 300e",  engine:"전기", drive:"2WD", price:69000000, cc:0},
+      {trim:"RZ 450e",  engine:"전기", drive:"AWD", price:82000000, cc:0},
+    ],
+  },
+};
+
+/* ================================================================
+   OPTIONS DATA
+================================================================ */
+const OPTIONS_DATA = [
+  {name:"파노라마 선루프",                    price:700000},
+  {name:"듀얼 와이드 선루프",                 price:900000},
+  {name:"빌트인 캠 (전/후방)",                price:400000},
+  {name:"헤드업 디스플레이 (HUD)",            price:600000},
+  {name:"프리미엄 사운드 시스템",             price:900000},
+  {name:"앞좌석 통풍 시트",                   price:400000},
+  {name:"뒷좌석 통풍 시트",                   price:300000},
+  {name:"어라운드뷰 모니터 (AVM)",            price:500000},
+  {name:"전동 트렁크",                        price:300000},
+  {name:"무선 충전 패드",                     price:200000},
+  {name:"원격 스마트 주차 보조",              price:600000},
+  {name:"전동 조절 앞좌석 (럼버서포트)",      price:400000},
+  {name:"2열 전동 시트",                      price:500000},
+  {name:"파워 슬라이딩 도어 (미니밴)",        price:600000},
+  {name:"디지털 사이드 미러",                 price:400000},
+  {name:"증강현실 내비게이션",                price:300000},
+  {name:"특수 색상 (펄/메탈릭 추가)",         price:100000},
+  {name:"2톤 외장색 선택",                    price:300000},
+];
+
+const BRAND_CLASS = {
+  "아우디":"audi","벤츠":"benz","BMW":"bmw",
+  "폭스바겐":"vw","미니":"mini","볼보":"volvo","렉서스":"lexus"
+};
+
+/* ================================================================
+   STATE
+================================================================ */
+let currentBrand = null;
+let currentCar   = null;
+
+/* ================================================================
+   INIT OPTIONS
+================================================================ */
+(function initOptions() {
+  const grid = document.getElementById('optionsGrid');
+  OPTIONS_DATA.forEach((opt, i) => {
+    const div = document.createElement('label');
+    div.className = 'opt-item';
+    div.dataset.idx = i;
+    div.innerHTML = `<input type="checkbox" id="opt_${i}" onchange="updateOptionTotal()">
+      <span class="opt-name">${opt.name}</span>
+      <span class="opt-price">${(opt.price/10000).toFixed(0)}만원</span>`;
+    div.addEventListener('click', function(e) {
+      if (e.target.tagName !== 'INPUT') {
+        div.querySelector('input').click();
+      }
+    });
+    grid.appendChild(div);
+  });
+  // Sync checked class
+  grid.addEventListener('change', function(e) {
+    if (e.target.type === 'checkbox') {
+      e.target.closest('.opt-item').classList.toggle('checked', e.target.checked);
+    }
+  });
+})();
+
+function updateOptionTotal() {
+  let total = 0;
+  OPTIONS_DATA.forEach((opt, i) => {
+    const cb = document.getElementById('opt_' + i);
+    if (cb && cb.checked) total += opt.price;
+  });
+  document.getElementById('optionTotal').textContent = fmt(total);
+  updateCarInfo();
+}
+
+function getOptionTotal() {
+  let total = 0;
+  OPTIONS_DATA.forEach((opt, i) => {
+    const cb = document.getElementById('opt_' + i);
+    if (cb && cb.checked) total += opt.price;
+  });
+  return total;
+}
+
+function getSelectedOptions() {
+  const list = [];
+  OPTIONS_DATA.forEach((opt, i) => {
+    const cb = document.getElementById('opt_' + i);
+    if (cb && cb.checked) list.push(opt);
+  });
+  return list;
+}
+
+/* ================================================================
+   BRAND / MODEL / TRIM
+================================================================ */
+function selectBrand(brand, el) {
+  currentBrand = brand;
+  document.querySelectorAll('.brand-chip').forEach(c => {
+    c.className = 'brand-chip';
+  });
+  el.classList.add('active-' + BRAND_CLASS[brand]);
+
+  // Update brand label
+  const labelEl = document.getElementById('brandLabel');
+  labelEl.textContent = brand + ' 차량 정보';
+  labelEl.style.color = brandColor(brand);
+
+  // Populate model select
+  const modelSel = document.getElementById('carModel');
+  modelSel.innerHTML = '<option value="">모델 선택</option>';
+  Object.keys(CAR_DATA[brand]).forEach(model => {
+    const opt = document.createElement('option');
+    opt.value = model;
+    opt.textContent = model;
+    modelSel.appendChild(opt);
+  });
+  modelSel.disabled = false;
+
+  const trimSel = document.getElementById('carTrim');
+  trimSel.innerHTML = '<option value="">트림 선택</option>';
+  trimSel.disabled = true;
+
+  document.getElementById('carInfoBox').style.display = 'none';
+  document.getElementById('downPayAmt').textContent = '-';
+  document.getElementById('depositAmt').textContent = '-';
+  document.getElementById('residualAmt').textContent = '-';
+  currentCar = null;
+}
+
+function brandColor(brand) {
+  const map = {
+    "아우디":"#BB0A21","벤츠":"#1a1a1a","BMW":"#1C69D4",
+    "폭스바겐":"#001E50","미니":"#00A1DE","볼보":"#003057","렉서스":"#1A1A1A"
+  };
+  return map[brand] || 'var(--primary)';
+}
+
+function updateTrims() {
+  const brand  = currentBrand;
+  const model  = document.getElementById('carModel').value;
+  const trimSel= document.getElementById('carTrim');
+  trimSel.innerHTML = '<option value="">트림 선택</option>';
+
+  if (brand && model && CAR_DATA[brand] && CAR_DATA[brand][model]) {
+    CAR_DATA[brand][model].forEach((c, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = c.trim;
+      trimSel.appendChild(opt);
+    });
+    trimSel.disabled = false;
+  }
+  document.getElementById('carInfoBox').style.display = 'none';
+  currentCar = null;
+  updateConditionsUI();
+}
+
+function updateCarInfo() {
+  const brand   = currentBrand;
+  const model   = document.getElementById('carModel').value;
+  const trimIdx = document.getElementById('carTrim').value;
+  if (!brand || !model || trimIdx === '') {
+    document.getElementById('carInfoBox').style.display = 'none';
+    return;
+  }
+  const car   = CAR_DATA[brand][model][parseInt(trimIdx)];
+  currentCar  = car;
+  const opts  = getOptionTotal();
+  const total = car.price + opts;
+
+  document.getElementById('basePrice').textContent    = fmt(car.price);
+  document.getElementById('totalPrice').textContent   = fmt(total);
+  document.getElementById('engineType').textContent   = car.engine;
+  document.getElementById('displacement').textContent =
+    car.cc > 0 ? `${car.cc.toLocaleString()} cc / ${car.drive}` : `전기 / ${car.drive}`;
+
+  document.getElementById('carInfoBox').style.display = 'block';
+  updateConditionsUI();
+}
+
+function updateConditions() {
+  updateConditionsUI();
+  updateCommissionDisplay();
+}
+
+function updateCommissionDisplay() {
+  if (!currentCar) return;
+  const total = currentCar.price + getOptionTotal();
+  const rate  = parseFloat(document.getElementById('commissionRate').value) / 100 || 0;
+  document.getElementById('commissionDisplay').textContent = fmt(total * rate);
+}
+
+function updateConditionsUI() {
+  if (!currentCar) return;
+  const opts  = getOptionTotal();
+  const total = currentCar.price + opts;
+  const dp  = parseFloat(document.getElementById('downPayRate').value)  / 100 || 0;
+  const dep = parseFloat(document.getElementById('depositRate').value)  / 100 || 0;
+  const res = parseFloat(document.getElementById('residualRate').value) / 100 || 0;
+  document.getElementById('downPayAmt').textContent  = fmt(total * dp);
+  document.getElementById('depositAmt').textContent  = fmt(total * dep);
+  document.getElementById('residualAmt').textContent = fmt(total * res);
+  // Also refresh total price
+  document.getElementById('totalPrice').textContent  = fmt(total);
+}
+
+/* ================================================================
+   RANGE SYNC
+================================================================ */
+function syncRange(rangeId, labelId, numId, suffix) {
+  const val = document.getElementById(rangeId).value;
+  document.getElementById(labelId).textContent = val + suffix;
+  document.getElementById(numId).value = val;
+}
+function syncNum(rangeId, labelId, numId, suffix) {
+  const val = document.getElementById(numId).value;
+  document.getElementById(rangeId).value = val;
+  document.getElementById(labelId).textContent = val + suffix;
+}
+
+/* ================================================================
+   PMT
+================================================================ */
+function PMT(rate, nper, pv, fv) {
+  fv = fv || 0;
+  if (rate === 0) return (pv + fv) / nper;
+  const pvif = Math.pow(1 + rate, nper);
+  return rate * (pv * pvif + fv) / (pvif - 1);
+}
+
+/* ================================================================
+   FORMAT
+================================================================ */
+function fmt(n) {
+  if (n === null || n === undefined || isNaN(n)) return '-';
+  return Math.round(n).toLocaleString('ko-KR') + ' 원';
+}
+function fmtN(n) {
+  if (n === null || n === undefined || isNaN(n)) return '-';
+  return Math.round(n).toLocaleString('ko-KR');
+}
+
+/* ================================================================
+   CALCULATE
+================================================================ */
+function calculate() {
+  const brand   = currentBrand;
+  const model   = document.getElementById('carModel').value;
+  const trimIdx = document.getElementById('carTrim').value;
+
+  if (!brand || !model || trimIdx === '') {
+    alert('브랜드, 모델, 트림을 모두 선택해 주세요.');
+    return;
+  }
+
+  const car   = CAR_DATA[brand][model][parseInt(trimIdx)];
+  const opts  = getOptionTotal();
+  const total = car.price + opts;
+
+  const dp  = parseFloat(document.getElementById('downPayRate').value)  / 100 || 0;
+  const dep = parseFloat(document.getElementById('depositRate').value)  / 100 || 0;
+  const res = parseFloat(document.getElementById('residualRate').value) / 100 || 0;
+  const annualRate     = parseFloat(document.getElementById('interestRate').value) / 100 || 0.055;
+  const mr             = annualRate / 12;
+  const ADDON          = 0.15;
+  const mileage        = document.getElementById('mileage').value;
+  const commissionRate = parseFloat(document.getElementById('commissionRate').value) / 100 || 0;
+  const commissionAmt  = total * commissionRate;
+
+  const downPay  = total * dp;
+  const deposit  = total * dep;
+  const residual = total * res;
+
+  const periods   = [36, 48, 60];
+  const leaseData = [];
+  const rentData  = [];
+
+  periods.forEach(n => {
+    // 금융리스
+    const finPV           = total - downPay - residual;
+    const monthlyFinBase  = PMT(mr, n, finPV, 0);
+    const monthlyCommission = Math.round(commissionAmt / n);
+    const monthlyFin      = monthlyFinBase + monthlyCommission;
+    // 운용리스
+    const monthlyOpBase   = PMT(mr, n, total - downPay, -residual);
+    const monthlyOp       = monthlyOpBase + monthlyCommission;
+
+    leaseData.push({
+      n, finPV, downPay, deposit, residual,
+      commissionAmt, monthlyCommission,
+      monthlyFinBase, monthlyFin,
+      monthlyOpBase,  monthlyOp,
+      totalFin: monthlyFin * n + downPay,
+      totalOp:  monthlyOp  * n + downPay,
+    });
+
+    // 장기렌트
+    const monthlyBase      = PMT(mr, n, total - downPay, -residual);
+    const monthlySurcharge = Math.round(total * ADDON / n);
+    const monthlyRent      = monthlyBase + monthlySurcharge + monthlyCommission;
+    rentData.push({
+      n, downPay, deposit, residual,
+      commissionAmt, monthlyCommission,
+      monthlyBase, monthlySurcharge, monthlyRent,
+      totalRent: monthlyRent * n + downPay,
+    });
+  });
+
+  const ctx = {
+    brand, model, car, total, downPay, deposit, residual,
+    annualRate, dp, dep, res, mileage,
+    selectedOptions: getSelectedOptions(), optionTotal: opts,
+  };
+
+  // 할부 계산 데이터
+  const installData = [];
+  [10, 20, 30, 40, 50].forEach(cashPct => {
+    const cashAmt = Math.round(total * cashPct / 100);
+    const loanAmt = total - cashAmt;
+    const row = { cashPct, cashAmt, loanAmt, periods: [] };
+    periods.forEach(n => {
+      const monthlyLoan = loanAmt > 0 ? PMT(mr, n, loanAmt, 0) : 0;
+      const monthlyComm = Math.round(commissionAmt / n);
+      const monthly     = monthlyLoan + monthlyComm;
+      const totalPay    = cashAmt + monthly * n;
+      row.periods.push({ n, monthlyLoan, monthly, totalPay });
+    });
+    installData.push(row);
+  });
+  const zeroInstall = periods.map(n => ({
+    n,
+    monthly: Math.round(total / n),
+    totalPay: total,
+  }));
+
+  renderLease(ctx, leaseData);
+  renderRent(ctx, rentData);
+  renderCompare(ctx, leaseData, rentData);
+  renderInstallment(ctx, installData, zeroInstall);
+
+  document.getElementById('emptyState').style.display   = 'none';
+  document.getElementById('resultSection').style.display = 'block';
+  document.getElementById('resultSection').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ================================================================
+   BUILD SUMMARY HTML
+================================================================ */
+function buildSummaryHTML(ctx) {
+  const { brand, model, car, total, downPay, deposit, residual, dp, dep, res, annualRate, mileage, selectedOptions, optionTotal } = ctx;
+
+  const optRows = selectedOptions.length
+    ? selectedOptions.map(o => `<div class="sb-row"><span class="sb-key">${o.name}</span><span class="sb-val">${fmt(o.price)}</span></div>`).join('')
+    : '<div class="sb-row"><span class="sb-key" style="font-style:italic">선택된 옵션 없음</span><span></span></div>';
+
+  return `<div class="summary-row">
+    <div class="summary-box">
+      <h4>선택 차량 정보</h4>
+      <div class="sb-row"><span class="sb-key">브랜드</span><span class="sb-val">${brand}</span></div>
+      <div class="sb-row"><span class="sb-key">모델</span><span class="sb-val">${model} ${car.trim}</span></div>
+      <div class="sb-row"><span class="sb-key">엔진</span><span class="sb-val">${car.engine}</span></div>
+      <div class="sb-row"><span class="sb-key">배기량</span><span class="sb-val">${car.cc > 0 ? car.cc.toLocaleString() + ' cc' : '전기'}</span></div>
+      <div class="sb-row"><span class="sb-key">구동방식</span><span class="sb-val">${car.drive}</span></div>
+      <div class="sb-row"><span class="sb-key">기본 가격</span><span class="sb-val">${fmt(car.price)}</span></div>
+      <div class="sb-row"><span class="sb-key">옵션 합계</span><span class="sb-val">${fmt(optionTotal)}</span></div>
+      <div class="sb-total"><span>차량 총 가격</span><span>${fmt(total)}</span></div>
+    </div>
+    <div class="summary-box">
+      <h4>계약 조건</h4>
+      <div class="sb-row"><span class="sb-key">이자율</span><span class="sb-val">${(annualRate*100).toFixed(1)}% / 년</span></div>
+      <div class="sb-row"><span class="sb-key">선수금율</span><span class="sb-val">${(dp*100).toFixed(0)}% = ${fmt(downPay)}</span></div>
+      <div class="sb-row"><span class="sb-key">보증금율</span><span class="sb-val">${(dep*100).toFixed(0)}% = ${fmt(deposit)}</span></div>
+      <div class="sb-row"><span class="sb-key">잔존가치율</span><span class="sb-val">${(res*100).toFixed(0)}% = ${fmt(residual)}</span></div>
+      <div class="sb-row"><span class="sb-key">약정 주행거리</span><span class="sb-val">${parseInt(mileage).toLocaleString()} km/년</span></div>
+      <h4 style="margin-top:10px;">선택 옵션</h4>
+      ${optRows}
+      ${selectedOptions.length ? `<div class="sb-total"><span>옵션 소계</span><span>${fmt(optionTotal)}</span></div>` : ''}
+    </div>
+  </div>`;
+}
+
+/* ================================================================
+   RENDER LEASE
+================================================================ */
+function renderLease(ctx, leaseData) {
+  const { total } = ctx;
+  document.getElementById('leaseContent').innerHTML = buildSummaryHTML(ctx) + `
+    <p class="sec-heading">금융리스 vs 운용리스 &mdash; 36 / 48 / 60개월 비교</p>
+    <div class="tbl-wrap">
+    <table class="result-table">
+      <thead>
+        <tr>
+          <th style="text-align:left;">항목</th>
+          <th>36개월 (3년)</th>
+          <th>48개월 (4년)</th>
+          <th>60개월 (5년)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>차량 총 가격</td>${leaseData.map(()=>`<td>${fmt(total)}</td>`).join('')}</tr>
+        <tr><td>선수금</td>${leaseData.map(d=>`<td>${fmt(d.downPay)}</td>`).join('')}</tr>
+        <tr><td>잔존가치 (만기 시)</td>${leaseData.map(d=>`<td>${fmt(d.residual)}</td>`).join('')}</tr>
+        <tr><td>리스 원금 (금융리스)</td>${leaseData.map(d=>`<td>${fmt(d.finPV)}</td>`).join('')}</tr>
+        <tr><td>월 기본 리스료 (금융)</td>${leaseData.map(d=>`<td>${fmt(d.monthlyFinBase)}</td>`).join('')}</tr>
+        <tr><td>월 기본 리스료 (운용)</td>${leaseData.map(d=>`<td>${fmt(d.monthlyOpBase)}</td>`).join('')}</tr>
+        ${leaseData[0].monthlyCommission > 0 ? `<tr style="background:#fff5f5;"><td style="color:#e53935;">영업사원 수수료 (월 분할)</td>${leaseData.map(d=>`<td style="color:#e53935;">${fmt(d.monthlyCommission)}</td>`).join('')}</tr>` : ''}
+        <tr class="highlight"><td>&#128309; 월 리스료 &mdash; 금융리스</td>${leaseData.map(d=>`<td class="amount-big">${fmt(d.monthlyFin)}</td>`).join('')}</tr>
+        <tr class="highlight"><td>&#128312; 월 리스료 &mdash; 운용리스</td>${leaseData.map(d=>`<td class="amount-big">${fmt(d.monthlyOp)}</td>`).join('')}</tr>
+        <tr class="total-row"><td>총 리스료 합계 &mdash; 금융 (선수금 포함)</td>${leaseData.map(d=>`<td>${fmt(d.totalFin)}</td>`).join('')}</tr>
+        <tr class="total-row"><td>총 리스료 합계 &mdash; 운용 (선수금 포함)</td>${leaseData.map(d=>`<td>${fmt(d.totalOp)}</td>`).join('')}</tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="notice">
+      ※ <strong>금융리스:</strong> 만기 시 차량 소유권 이전 | 리스원금 = 차량총가격 &minus; 선수금 &minus; 잔존가치<br>
+      ※ <strong>운용리스:</strong> 만기 시 반납 또는 잔존가치로 인수 선택 가능<br>
+      ※ 차량 가격은 2024~2025년 기준 참고가격이며 실제 딜러 및 계약 조건에 따라 다를 수 있습니다.<br>
+      ※ 실제 월 납입금은 금융사·차량 조건·신용등급 등에 따라 달라질 수 있습니다.
+    </div>`;
+}
+
+/* ================================================================
+   RENDER RENT
+================================================================ */
+function renderRent(ctx, rentData) {
+  const { total } = ctx;
+  document.getElementById('rentContent').innerHTML = buildSummaryHTML(ctx) + `
+    <p class="sec-heading">장기렌트 &mdash; 36 / 48 / 60개월 비교</p>
+    <div class="tbl-wrap">
+    <table class="result-table">
+      <thead>
+        <tr>
+          <th style="text-align:left;">항목</th>
+          <th>36개월 (3년)</th>
+          <th>48개월 (4년)</th>
+          <th>60개월 (5년)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>차량 총 가격</td>${rentData.map(()=>`<td>${fmt(total)}</td>`).join('')}</tr>
+        <tr><td>선수금</td>${rentData.map(d=>`<td>${fmt(d.downPay)}</td>`).join('')}</tr>
+        <tr><td>잔존가치</td>${rentData.map(d=>`<td>${fmt(d.residual)}</td>`).join('')}</tr>
+        <tr><td>월 기본 렌탈료</td>${rentData.map(d=>`<td>${fmt(d.monthlyBase)}</td>`).join('')}</tr>
+        <tr><td>월 부대비용 (보험·세금·정비 15%)</td>${rentData.map(d=>`<td>${fmt(d.monthlySurcharge)}</td>`).join('')}</tr>
+        ${rentData[0].monthlyCommission > 0 ? `<tr style="background:#fff5f5;"><td style="color:#e53935;">영업사원 수수료 (월 분할)</td>${rentData.map(d=>`<td style="color:#e53935;">${fmt(d.monthlyCommission)}</td>`).join('')}</tr>` : ''}
+        <tr class="highlight"><td>&#129001; 월 총 렌탈료</td>${rentData.map(d=>`<td class="amount-big">${fmt(d.monthlyRent)}</td>`).join('')}</tr>
+        <tr class="total-row"><td>총 렌탈료 합계 (선수금 포함)</td>${rentData.map(d=>`<td>${fmt(d.totalRent)}</td>`).join('')}</tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="notice">
+      ※ 렌트료에는 자동차세 / 보험료 / 정기점검비가 포함되어 있습니다 (가산율 15% 적용).<br>
+      ※ 렌트 가산율은 렌트사별로 상이하며, 실제 계약 시 확인이 필요합니다.<br>
+      ※ 차량 가격은 2024~2025년 기준 참고가격이며 실제 딜러 및 계약 조건에 따라 다를 수 있습니다.
+    </div>`;
+}
+
+/* ================================================================
+   RENDER COMPARE
+================================================================ */
+function renderCompare(ctx, leaseData, rentData) {
+  const ld48 = leaseData[1];
+  const rd48 = rentData[1];
+
+  // Bar chart widths (relative to max)
+  const vals36 = [leaseData[0].monthlyFin, leaseData[0].monthlyOp, rentData[0].monthlyRent];
+  const vals48 = [ld48.monthlyFin, ld48.monthlyOp, rd48.monthlyRent];
+  const vals60 = [leaseData[2].monthlyFin, leaseData[2].monthlyOp, rentData[2].monthlyRent];
+  const allVals = [...vals36, ...vals48, ...vals60];
+  const maxVal = Math.max(...allVals);
+
+  function bar(v, color) {
+    const w = Math.round(v / maxVal * 100);
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+      <div style="height:14px;width:${w}%;background:${color};border-radius:3px;min-width:4px;"></div>
+      <span style="font-size:0.78rem;font-weight:700;white-space:nowrap;">${fmtN(v)}</span>
+    </div>`;
+  }
+
+  document.getElementById('compareContent').innerHTML = `
+    ${buildSummaryHTML(ctx)}
+
+    <p class="sec-heading">48개월 기준 월 납입금 비교</p>
+    <div class="compare-grid">
+      <div class="compare-card lease-fin">
+        <div class="cc-label">장기리스 (금융)</div>
+        <div class="cc-monthly">${fmtN(ld48.monthlyFin)}<span style="font-size:0.85rem;font-weight:600"> 원</span></div>
+        <div class="cc-sub">48개월 · 만기 소유권 이전</div>
+      </div>
+      <div class="compare-card lease-op">
+        <div class="cc-label">장기리스 (운용)</div>
+        <div class="cc-monthly">${fmtN(ld48.monthlyOp)}<span style="font-size:0.85rem;font-weight:600"> 원</span></div>
+        <div class="cc-sub">48개월 · 만기 반납/인수</div>
+      </div>
+      <div class="compare-card rent">
+        <div class="cc-label">장기렌트</div>
+        <div class="cc-monthly">${fmtN(rd48.monthlyRent)}<span style="font-size:0.85rem;font-weight:600"> 원</span></div>
+        <div class="cc-sub">48개월 · 보험/세금/정비 포함</div>
+      </div>
+    </div>
+
+    <p class="sec-heading">기간별 월 납입금 시각화</p>
+    <div style="background:#f9fafc;border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:18px;">
+      <div style="display:grid;grid-template-columns:80px 1fr;gap:10px;align-items:center;margin-bottom:12px;">
+        <span style="font-size:0.78rem;font-weight:700;color:var(--text-muted);">36개월</span>
+        <div>
+          ${bar(leaseData[0].monthlyFin,'#3b82f6')}
+          ${bar(leaseData[0].monthlyOp,'#8b5cf6')}
+          ${bar(rentData[0].monthlyRent,'#10b981')}
+        </div>
+        <span style="font-size:0.78rem;font-weight:700;color:var(--text-muted);">48개월</span>
+        <div>
+          ${bar(ld48.monthlyFin,'#3b82f6')}
+          ${bar(ld48.monthlyOp,'#8b5cf6')}
+          ${bar(rd48.monthlyRent,'#10b981')}
+        </div>
+        <span style="font-size:0.78rem;font-weight:700;color:var(--text-muted);">60개월</span>
+        <div>
+          ${bar(leaseData[2].monthlyFin,'#3b82f6')}
+          ${bar(leaseData[2].monthlyOp,'#8b5cf6')}
+          ${bar(rentData[2].monthlyRent,'#10b981')}
+        </div>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:0.73rem;">
+        <span><span style="display:inline-block;width:10px;height:10px;background:#3b82f6;border-radius:2px;margin-right:4px;"></span>금융리스</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:#8b5cf6;border-radius:2px;margin-right:4px;"></span>운용리스</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:#10b981;border-radius:2px;margin-right:4px;"></span>장기렌트</span>
+      </div>
+    </div>
+
+    <p class="sec-heading">기간별 월 납입금 표</p>
+    <div class="tbl-wrap">
+    <table class="result-table">
+      <thead>
+        <tr><th style="text-align:left;">구분</th><th>36개월</th><th>48개월</th><th>60개월</th><th style="text-align:left;">특징</th></tr>
+      </thead>
+      <tbody>
+        <tr class="highlight">
+          <td>&#128309; 장기리스 (금융)</td>
+          ${leaseData.map(d=>`<td class="amount-big">${fmt(d.monthlyFin)}</td>`).join('')}
+          <td style="text-align:left;font-size:0.78rem;color:#4b5fa0;">만기 시 소유권 이전</td>
+        </tr>
+        <tr class="highlight">
+          <td>&#128312; 장기리스 (운용)</td>
+          ${leaseData.map(d=>`<td class="amount-big">${fmt(d.monthlyOp)}</td>`).join('')}
+          <td style="text-align:left;font-size:0.78rem;color:#6d28d9;">만기 시 반납/인수 선택</td>
+        </tr>
+        <tr class="highlight">
+          <td>&#129001; 장기렌트</td>
+          ${rentData.map(d=>`<td class="amount-big">${fmt(d.monthlyRent)}</td>`).join('')}
+          <td style="text-align:left;font-size:0.78rem;color:#047857;">보험/세금/정비 포함</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p class="sec-heading">기간별 총 비용 비교 (선수금 포함)</p>
+    <div class="tbl-wrap">
+    <table class="result-table">
+      <thead>
+        <tr><th style="text-align:left;">구분</th><th>36개월</th><th>48개월</th><th>60개월</th></tr>
+      </thead>
+      <tbody>
+        <tr class="total-row"><td>장기리스 (금융)</td>${leaseData.map(d=>`<td>${fmt(d.totalFin)}</td>`).join('')}</tr>
+        <tr class="total-row"><td>장기리스 (운용)</td>${leaseData.map(d=>`<td>${fmt(d.totalOp)}</td>`).join('')}</tr>
+        <tr class="total-row"><td>장기렌트</td>${rentData.map(d=>`<td>${fmt(d.totalRent)}</td>`).join('')}</tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p class="sec-heading">리스 vs 렌트 주요 차이점</p>
+    <div class="tbl-wrap">
+    <table class="diff-table">
+      <thead>
+        <tr>
+          <th>항목</th>
+          <th class="fin">장기리스 (금융)</th>
+          <th class="op">장기리스 (운용)</th>
+          <th class="rnt">장기렌트</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>차량 등록 명의</td>
+          <td class="fin">본인 명의</td>
+          <td class="op">리스사 명의</td>
+          <td class="rnt">렌트사 명의 (허번판)</td>
+        </tr>
+        <tr>
+          <td>보험료</td>
+          <td class="fin">본인 가입/부담</td>
+          <td class="op">본인 가입/부담</td>
+          <td class="rnt">렌탈료에 포함</td>
+        </tr>
+        <tr>
+          <td>자동차세</td>
+          <td class="fin">본인 부담</td>
+          <td class="op">본인 부담</td>
+          <td class="rnt">렌탈료에 포함</td>
+        </tr>
+        <tr>
+          <td>정기점검 / 정비</td>
+          <td class="fin">본인 부담</td>
+          <td class="op">본인 부담</td>
+          <td class="rnt">렌탈료에 포함</td>
+        </tr>
+        <tr>
+          <td>만기 시 처리</td>
+          <td class="fin">소유권 자동 이전</td>
+          <td class="op">반납 또는 인수 선택</td>
+          <td class="rnt">반납 또는 인수 선택</td>
+        </tr>
+        <tr>
+          <td>비용처리 (법인)</td>
+          <td class="fin">감가상각비 처리</td>
+          <td class="op">리스료 전액 경비</td>
+          <td class="rnt">렌탈료 전액 경비</td>
+        </tr>
+        <tr>
+          <td>신용조회 부채반영</td>
+          <td class="fin">부채 반영됨</td>
+          <td class="op">부채 미반영</td>
+          <td class="rnt">부채 미반영</td>
+        </tr>
+        <tr>
+          <td>보증금</td>
+          <td class="fin">없음 (선수금만)</td>
+          <td class="op">계약 시 납입, 만기 환급</td>
+          <td class="rnt">계약 시 납입, 만기 환급</td>
+        </tr>
+        <tr>
+          <td>번호판</td>
+          <td class="fin">일반 번호판</td>
+          <td class="op">일반 번호판</td>
+          <td class="rnt">하 / 허 / 호 번호판</td>
+        </tr>
+        <tr>
+          <td>중도 해지</td>
+          <td class="fin">위약금 발생</td>
+          <td class="op">위약금 발생</td>
+          <td class="rnt">위약금 발생</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="notice">
+      ※ 차량 가격은 2024~2025년 기준 참고가격이며 실제 딜러 및 계약 조건에 따라 다를 수 있습니다.<br>
+      ※ 위 계산은 참고용이며 실제 견적은 금융사 및 렌트사 조건에 따라 다를 수 있습니다.<br>
+      ※ 보증금은 계약 종료 시 전액 환급됩니다.<br>
+      ※ 렌트 가산율(15%)는 추정치로 실제 렌트사별로 상이합니다.
+    </div>`;
+}
+
+/* ================================================================
+   TAB SWITCH
+================================================================ */
+function showTab(name) {
+  const tabs = ['lease', 'rent', 'compare', 'installment'];
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', tabs[i] === name);
+  });
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+/* ================================================================
+   RENDER INSTALLMENT
+================================================================ */
+function renderInstallment(ctx, installData, zeroInstall) {
+  const { car, model, total, annualRate } = ctx;
+
+  const periodCols = `<th>36개월</th><th>48개월</th><th>60개월</th>`;
+
+  const zeroRow = `
+    <tr style="background:#f0fdf4;">
+      <td><strong>무이자 할부</strong><br><small style="color:var(--text-muted)">차량가 ÷ 개월수 (이자 없음)</small></td>
+      <td style="color:#047857;">0%</td>
+      <td style="color:#047857;">${fmt(total)}</td>
+      ${zeroInstall.map(z => `<td class="amount-big" style="color:#047857;">${fmt(z.monthly)}</td>`).join('')}
+      ${zeroInstall.map(z => `<td>${fmt(z.totalPay)}</td>`).join('')}
+    </tr>`;
+
+  const loanRows = installData.map(d => `
+    <tr>
+      <td><strong>현금 ${d.cashPct}% + 잔금 할부</strong><br><small style="color:var(--text-muted)">현금 ${fmt(d.cashAmt)} 선납</small></td>
+      <td>${d.cashPct}%</td>
+      <td>${fmt(d.loanAmt)}</td>
+      ${d.periods.map(p => `<td class="amount-big">${fmt(p.monthly)}</td>`).join('')}
+      ${d.periods.map(p => `<td>${fmt(p.totalPay)}</td>`).join('')}
+    </tr>`).join('');
+
+  document.getElementById('installmentContent').innerHTML = `
+    <div style="background:#f0f9ff;border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:0.85rem;color:#0369a1;line-height:1.8;">
+      <strong>차량:</strong> ${model} ${car.trim} &nbsp;|&nbsp;
+      <strong>차량 총 가격:</strong> ${fmt(total)} &nbsp;|&nbsp;
+      <strong>할부 이자율:</strong> ${(annualRate*100).toFixed(1)}% (연) &nbsp;|&nbsp;
+      <strong>계산 방식:</strong> 원리금균등상환 (PMT)
+    </div>
+
+    <div style="overflow-x:auto;">
+    <table class="result-table" style="min-width:780px;">
+      <thead>
+        <tr>
+          <th rowspan="2" style="text-align:left;min-width:180px;">계약 유형</th>
+          <th rowspan="2">현금<br>비율</th>
+          <th rowspan="2">할부<br>원금</th>
+          <th colspan="3" style="background:#dbeafe;color:#1d4ed8;">월 납입금</th>
+          <th colspan="3" style="background:#fef3c7;color:#92400e;">총 납입금</th>
+        </tr>
+        <tr>${periodCols}${periodCols}</tr>
+      </thead>
+      <tbody>
+        ${zeroRow}
+        ${loanRows}
+      </tbody>
+    </table>
+    </div>
+
+    <div style="margin-top:20px;">
+      <h3 style="font-size:0.92rem;font-weight:700;color:var(--text-muted);margin-bottom:12px;">현금 선납 비율별 36개월 월 납입금 비교</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;">
+        <div style="background:linear-gradient(135deg,#f0fdf4,#fff);border:2px solid #86efac;border-radius:12px;padding:16px;text-align:center;">
+          <div style="font-size:0.75rem;font-weight:700;color:#16a34a;margin-bottom:4px;">무이자 할부</div>
+          <div style="font-size:1.3rem;font-weight:800;color:#15803d;">${Math.round(total/36).toLocaleString()}<span style="font-size:0.8rem;">원</span></div>
+          <div style="font-size:0.72rem;color:var(--text-muted);">이자 0원</div>
+        </div>
+        ${installData.map(d => `
+        <div style="background:linear-gradient(135deg,#eff6ff,#fff);border:2px solid #93c5fd;border-radius:12px;padding:16px;text-align:center;">
+          <div style="font-size:0.75rem;font-weight:700;color:#2563eb;margin-bottom:4px;">현금 ${d.cashPct}% 선납</div>
+          <div style="font-size:1.3rem;font-weight:800;color:#1d4ed8;">${Math.round(d.periods[0].monthly).toLocaleString()}<span style="font-size:0.8rem;">원</span></div>
+          <div style="font-size:0.72rem;color:var(--text-muted);">선납 ${fmt(d.cashAmt)}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="notice" style="margin-top:20px;">
+      ※ <strong>무이자 할부</strong>: 차량 총 가격 ÷ 개월수 (단순 분할, 이자 없음)<br>
+      ※ <strong>분할 할부</strong>: 현금 선납 후 잔금을 원리금균등상환 방식으로 분할<br>
+      ※ 월 납입금에 영업사원 수수료(설정 시)가 포함되어 있습니다.<br>
+      ※ 실제 할부 이자율은 캐피탈사·금융기관에 따라 다르며, 무이자 할부는 제조사/딜러 프로모션으로 제공됩니다.
+    </div>`;
+}
+</script>
+</body>
+</html>

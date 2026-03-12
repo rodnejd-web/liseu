@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install:*)",
+      "Bash(python -c \"\nimport openpyxl\nimport json\n\nwb = openpyxl.load_workbook\\(r'C:\\\\Users\\\\User\\\\Desktop\\\\견적서.xlsx'\\)\nprint\\('시트 목록:', wb.sheetnames\\)\nprint\\(\\)\n\nfor sheet in wb.sheetnames:\n    ws = wb[sheet]\n    print\\(f'=== {sheet} ==='\\)\n    for row in ws.iter_rows\\(values_only=True\\):\n        if any\\(cell is not None for cell in row\\):\n            print\\(row\\)\n    print\\(\\)\n\" 2>&1 | python -c \"\nimport sys\nimport io\nsys.stdout = io.TextIOWrapper\\(sys.stdout.buffer, encoding='utf-8'\\)\nsys.stdin = io.TextIOWrapper\\(sys.stdin.buffer, encoding='cp949'\\)\nfor line in sys.stdin:\n    print\\(line, end=''\\)\n\" 2>/dev/null || python -u -c \"\nimport openpyxl\nimport sys\n\nwb = openpyxl.load_workbook\\(r'C:\\\\Users\\\\User\\\\Desktop\\\\견적서.xlsx'\\)\nprint\\('시트 목록:', wb.sheetnames\\)\n\")"
+    ]
+  }
+}
