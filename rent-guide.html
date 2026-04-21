@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4265545624091942"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>장기렌트 완전 가이드 | 비용 계산, 장단점, 렌트 vs 리스 비교</title>
+<meta name="description" content="장기렌트의 모든 것. 월 납입금 계산 방법, 리스와의 차이점, 하 번호판 여부, 보험 포함 여부, 자동차세 부담 등 장기렌트 계약 전 꼭 알아야 할 내용을 정리합니다.">
+<meta name="keywords" content="장기렌트, 장기렌트 계산, 장기렌트 장단점, 장기렌트 리스 차이, 하 번호판, 렌터카 장기, 자동차 렌트, 월 렌트비 계산">
+<meta name="robots" content="index, follow">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    background: #f0f4fb; color: #1a2236; min-height: 100vh;
+  }
+
+  .top-nav {
+    position: sticky; top: 0; z-index: 200;
+    background: #0a1628; display: flex; align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3); flex-wrap: wrap;
+  }
+  .top-nav a {
+    display: flex; align-items: center; gap: 7px;
+    padding: 13px 28px; font-size: 0.88rem; font-weight: 700;
+    color: rgba(255,255,255,0.55); text-decoration: none;
+    border-bottom: 3px solid transparent; transition: all 0.18s;
+  }
+  .top-nav a:hover { color: white; background: rgba(255,255,255,0.06); }
+  .top-nav a.active { color: white; border-bottom-color: #00aad4; background: rgba(0,170,212,0.1); }
+  .top-nav .nav-logo {
+    padding: 13px 24px 13px 20px; font-size: 0.95rem; font-weight: 900;
+    color: white; letter-spacing: -0.5px; border-right: 1px solid rgba(255,255,255,0.12);
+  }
+
+  .site-header {
+    background: linear-gradient(135deg, #003087 0%, #0050c8 60%, #00aad4 100%);
+    color: white; padding: 28px 32px;
+    box-shadow: 0 4px 20px rgba(0,48,135,0.3);
+  }
+  .site-header h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; }
+  .site-header p { font-size: 0.85rem; opacity: 0.8; margin-top: 6px; }
+
+  .container {
+    max-width: 860px; margin: 0 auto; padding: 40px 16px 80px;
+  }
+
+  .card {
+    background: white; border-radius: 16px; border: 1px solid #dde2ef;
+    padding: 32px 36px; box-shadow: 0 2px 14px rgba(0,0,0,0.05);
+    margin-bottom: 24px;
+  }
+
+  .section-title {
+    font-size: 1.05rem; font-weight: 800; color: #003087;
+    margin-bottom: 16px; padding-bottom: 12px;
+    border-bottom: 2px solid #dde2ef;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title::before {
+    content: ''; display: inline-block; width: 4px; height: 18px;
+    background: #003087; border-radius: 2px; flex-shrink: 0;
+  }
+
+  h3 { font-size: 0.95rem; font-weight: 800; color: #003087; margin: 20px 0 8px; }
+
+  p { font-size: 0.9rem; line-height: 1.85; color: #1a2236; margin-bottom: 12px; }
+  p:last-child { margin-bottom: 0; }
+
+  ul { padding-left: 20px; margin-bottom: 12px; }
+  ul li { font-size: 0.9rem; line-height: 1.85; color: #1a2236; margin-bottom: 4px; }
+
+  .highlight-box {
+    background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px;
+    padding: 18px 22px; margin: 16px 0; font-size: 0.88rem;
+    color: #92400e; line-height: 1.8;
+  }
+  .highlight-box strong { color: #78350f; }
+
+  .info-box {
+    background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px;
+    padding: 18px 22px; margin: 16px 0; font-size: 0.88rem;
+    color: #1e40af; line-height: 1.8;
+  }
+
+  .success-box {
+    background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px;
+    padding: 18px 22px; margin: 16px 0; font-size: 0.88rem;
+    color: #15803d; line-height: 1.8;
+  }
+
+  .compare-table {
+    width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.88rem;
+  }
+  .compare-table th {
+    background: #003087; color: white; padding: 12px 14px;
+    text-align: center; font-weight: 700;
+  }
+  .compare-table td {
+    padding: 11px 14px; border: 1px solid #dde2ef;
+    text-align: center; vertical-align: middle; line-height: 1.6;
+  }
+  .compare-table tr:nth-child(even) td { background: #f8faff; }
+  .td-left { text-align: left !important; font-weight: 600; color: #003087; }
+  .badge-good { color: #15803d; font-weight: 700; }
+  .badge-bad { color: #dc2626; font-weight: 700; }
+  .badge-mid { color: #d97706; font-weight: 700; }
+
+  .formula-box {
+    background: #0a1628; color: #e0e8ff; border-radius: 12px;
+    padding: 20px 24px; margin: 16px 0; font-family: 'Courier New', monospace;
+    font-size: 0.87rem; line-height: 1.9;
+  }
+  .formula-box .f-title { color: #00aad4; font-weight: 700; margin-bottom: 8px; font-family: inherit; }
+  .formula-box .f-comment { color: rgba(255,255,255,0.4); }
+
+  .step-list { list-style: none; padding: 0; }
+  .step-list li {
+    display: flex; gap: 14px; margin-bottom: 16px; align-items: flex-start;
+  }
+  .step-num {
+    flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+    background: #003087; color: white; font-size: 0.82rem; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; margin-top: 1px;
+  }
+  .step-content { font-size: 0.9rem; line-height: 1.8; color: #1a2236; }
+  .step-content strong { color: #003087; }
+
+  .cta-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(135deg, #003087, #0050c8);
+    color: white; text-decoration: none; border-radius: 10px;
+    padding: 13px 22px; font-size: 0.9rem; font-weight: 700;
+    transition: opacity 0.18s; margin-top: 8px; margin-right: 8px;
+  }
+  .cta-btn:hover { opacity: 0.88; }
+  .cta-btn.secondary {
+    background: white; color: #003087;
+    border: 2px solid #003087;
+  }
+  .cta-btn.secondary:hover { background: #f0f4fb; }
+
+  .toc { padding-left: 0; list-style: none; }
+  .toc li { margin-bottom: 8px; }
+  .toc a { color: #0050c8; text-decoration: none; font-size: 0.9rem; font-weight: 600; }
+  .toc a:hover { text-decoration: underline; }
+  .toc-num { color: #6b7a9a; margin-right: 6px; font-size: 0.82rem; }
+
+  .site-footer {
+    background: #0a1628; color: rgba(255,255,255,0.6);
+    padding: 36px 16px; font-size: 0.82rem; line-height: 1.7;
+  }
+  .footer-inner { max-width: 860px; margin: 0 auto; text-align: center; }
+  .footer-links {
+    display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .footer-links a {
+    color: rgba(255,255,255,0.75); text-decoration: none;
+    font-weight: 600; transition: color 0.18s;
+  }
+  .footer-links a:hover { color: #00aad4; }
+  .footer-notice { color: rgba(255,255,255,0.45); font-size: 0.78rem; margin-bottom: 10px; }
+  .footer-copy { color: rgba(255,255,255,0.3); font-size: 0.75rem; }
+
+  @media (max-width: 600px) {
+    .card { padding: 20px 18px; }
+    .site-header { padding: 20px 16px; }
+    .compare-table { font-size: 0.78rem; }
+    .compare-table th, .compare-table td { padding: 8px 8px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <span class="nav-logo">🚗 리스·렌트 계산기</span>
+  <a href="about.html">ℹ️ 사이트 소개</a>
+  <a href="index.html">🇰🇷 국산차</a>
+  <a href="import.html">🌍 수입차</a>
+  <a href="lease-guide.html">📋 리스 가이드</a>
+  <a href="rent-guide.html" class="active">📋 렌트 가이드</a>
+</nav>
+
+<header class="site-header">
+  <h1>📋 장기렌트 완전 가이드</h1>
+  <p>장기렌트 비용 계산부터 리스·할부와의 차이, 하 번호판, 보험까지 모두 정리합니다.</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <h2 class="section-title">목차</h2>
+    <ul class="toc">
+      <li><a href="#what-is-rent"><span class="toc-num">1.</span>장기렌트란 무엇인가?</a></li>
+      <li><a href="#key-terms"><span class="toc-num">2.</span>장기렌트 핵심 용어 정리</a></li>
+      <li><a href="#how-to-calc"><span class="toc-num">3.</span>월 렌트비 계산 방법</a></li>
+      <li><a href="#plate-number"><span class="toc-num">4.</span>하 번호판, 문제없을까?</a></li>
+      <li><a href="#insurance"><span class="toc-num">5.</span>보험·자동차세는 누가 부담?</a></li>
+      <li><a href="#compare"><span class="toc-num">6.</span>렌트 vs 리스 vs 할부 비교</a></li>
+      <li><a href="#pros-cons"><span class="toc-num">7.</span>장기렌트의 장점과 단점</a></li>
+      <li><a href="#who-is-it-for"><span class="toc-num">8.</span>어떤 사람에게 적합한가?</a></li>
+      <li><a href="#checklist"><span class="toc-num">9.</span>렌트 계약 전 체크리스트</a></li>
+    </ul>
+  </div>
+
+  <div class="card" id="what-is-rent">
+    <h2 class="section-title">1. 장기렌트란 무엇인가?</h2>
+    <p>
+      <strong>장기렌트(Long-term Car Rental)</strong>는 렌터카 회사가 소유한 차량을
+      이용자가 월 렌트비를 내고 장기간(보통 12~60개월) 사용하는 서비스입니다.
+      리스와 비슷해 보이지만, 법적으로는 "여객자동차 운수사업법"에 따른 렌터카 서비스이므로
+      차량 등록이 렌터카 회사 명의로 이루어지고, 번호판도 "하"로 시작하는 렌터카 번호판이 발급됩니다.
+    </p>
+    <p>
+      보험료와 자동차세를 렌터카 회사가 부담하므로 이용자 입장에서는 관리 부담이 줄어드는 장점이 있습니다.
+      단, 월 렌트비에 이러한 비용이 포함되어 있으므로 절대적인 납입금은 리스보다 다소 높은 편입니다.
+    </p>
+    <div class="info-box">
+      💡 <strong>핵심 차이:</strong> 장기렌트는 "서비스 상품"입니다. 렌터카 회사가 차량 소유·등록·보험·세금을 관리하고,
+      이용자는 정해진 렌트비를 납부하고 차량을 사용하는 방식입니다.
+    </div>
+  </div>
+
+  <div class="card" id="key-terms">
+    <h2 class="section-title">2. 장기렌트 핵심 용어 정리</h2>
+
+    <h3>① 렌트비 (월 납입금)</h3>
+    <p>
+      매월 납부하는 금액으로, 차량 감가상각비 + 금융비용 + 보험료 + 자동차세 + 렌터카사 마진이 포함됩니다.
+      리스와 달리 보험료와 세금이 포함된 "올인원" 비용입니다.
+    </p>
+
+    <h3>② 선납금</h3>
+    <p>
+      계약 시 미리 납부하는 금액입니다. 선납금이 높을수록 월 렌트비가 낮아집니다.
+      일반적으로 차량 가격의 10~30% 범위에서 설정합니다.
+    </p>
+
+    <h3>③ 보증금</h3>
+    <p>
+      계약 보증 목적으로 납부하는 금액으로, 계약 종료 시 반환됩니다.
+      선납금과 달리 렌터카사가 보관하는 담보 성격의 금액입니다.
+    </p>
+
+    <h3>④ 약정 주행거리</h3>
+    <p>
+      계약 기간 동안 허용되는 총(또는 연간) 주행거리입니다.
+      초과 시 km당 추가 요금이 부과되므로 본인의 실제 주행 패턴보다 넉넉하게 설정하는 것이 좋습니다.
+      일반적으로 연 1만 5천~3만km 범위에서 선택합니다.
+    </p>
+
+    <h3>⑤ 잔존가치 (반납 시 차량 가치)</h3>
+    <p>
+      계약 종료 시 차량의 예상 가치입니다. 렌터카 회사가 이 리스크를 부담합니다.
+      이용자가 반납 시 실제 중고 시세가 약정 잔존가치보다 높으면 렌터카사가 이익을 보고,
+      낮으면 렌터카사가 손실을 보는 구조입니다.
+    </p>
+
+    <h3>⑥ 자기부담금 (사고 시)</h3>
+    <p>
+      렌터카 보험이 포함되어 있지만, 사고 발생 시 이용자가 부담하는 자기부담금이 있습니다.
+      계약 조건에 따라 다르며, 별도의 자차 보험 상품을 추가 가입할 수 있습니다.
+    </p>
+  </div>
+
+  <div class="card" id="how-to-calc">
+    <h2 class="section-title">3. 월 렌트비 계산 방법</h2>
+    <p>
+      장기렌트의 월 렌트비는 다음과 같은 요소들을 합산하여 산정됩니다.
+      렌터카 회사마다 계산 방식이 다소 차이가 있습니다.
+    </p>
+
+    <div class="formula-box">
+      <div class="f-title">장기렌트 월 렌트비 구성 요소</div>
+      차량 감가분    = (차량가격 − 선납금 − 잔존가치) ÷ 계약 개월 수<br>
+      금융비용       = 잔여 원금 × 연 이자율 ÷ 12<br>
+      보험료 배분    = 연간 보험료 ÷ 12<br>
+      자동차세 배분  = 연간 자동차세 ÷ 12<br>
+      관리비·마진    = 렌터카사 자체 책정<br>
+      <span class="f-comment">─────────────────────────────────────</span><br>
+      월 렌트비      = 위 항목의 합계
+    </div>
+
+    <h3>계산 예시 (36개월 장기렌트)</h3>
+    <div class="formula-box">
+      <div class="f-title">예시: 국산 SUV 4,000만원, 36개월, 연 6%</div>
+      차량가격   = 40,000,000원<br>
+      선납금     = 4,000,000원 (10%)<br>
+      잔존가치   = 10,000,000원 (25%)<br>
+      실질원금   = 40,000,000 − 4,000,000 − 10,000,000 = 26,000,000원<br>
+      월 감가분  = 26,000,000 ÷ 36 ≈ 722,222원<br>
+      첫달 금융비 = 26,000,000 × 0.06 ÷ 12 ≈ 130,000원<br>
+      보험+세금  ≈ 80,000원 (추정)<br>
+      <span class="f-comment">→ 첫 달 렌트비 ≈ 932,222원 (리스 대비 약 10~15% 높음)</span>
+    </div>
+
+    <div class="highlight-box">
+      <strong>⚠️ 주의:</strong> 위 계산은 이해를 돕기 위한 단순 예시입니다.
+      실제 렌터카사의 렌트비는 보험료 등급, 주행거리 조건, 차량 종류, 프로모션 등에 따라
+      크게 달라질 수 있습니다. 정확한 견적은 반드시 렌터카사에 문의하세요.
+    </div>
+
+    <p style="margin-top:16px;">
+      <a href="index.html" class="cta-btn">🇰🇷 국산차 렌트 계산하기</a>
+      <a href="import.html" class="cta-btn secondary">🌍 수입차 렌트 계산하기</a>
+    </p>
+  </div>
+
+  <div class="card" id="plate-number">
+    <h2 class="section-title">4. 하 번호판, 문제없을까?</h2>
+    <p>
+      장기렌트 차량은 "하"로 시작하는 렌터카 번호판이 발급됩니다.
+      이는 차량이 렌터카 회사 소유임을 나타냅니다. 일반 번호판을 원한다면 장기리스를 선택해야 합니다.
+    </p>
+
+    <h3>하 번호판이 문제가 되는 경우</h3>
+    <ul>
+      <li><strong>일부 주차장·시설 입장 제한:</strong> 일부 고급 아파트, 기업 주차장 등에서 렌터카 입차를 제한하는 경우가 있습니다.</li>
+      <li><strong>사회적 인식:</strong> 렌터카 차량이라는 것이 외관에서 드러납니다. 이를 신경 쓰는 분들은 리스를 선택하는 경우가 많습니다.</li>
+      <li><strong>일부 자동차 전용도로 단속 카메라:</strong> 특정 구간의 속도위반 단속 시 고지서가 렌터카사로 발송되어 처리가 복잡해질 수 있습니다.</li>
+    </ul>
+
+    <h3>하 번호판이 문제가 되지 않는 경우</h3>
+    <ul>
+      <li>일반 도로·고속도로 주행은 완전히 동일합니다.</li>
+      <li>하이패스, 주차 요금 등 대부분의 일상 상황에서 차이가 없습니다.</li>
+      <li>사업자의 경우 오히려 하 번호판이 세금계산서 처리에 유리한 경우도 있습니다.</li>
+    </ul>
+
+    <div class="info-box">
+      💡 번호판에 민감하다면 장기리스(일반 번호판)를 선택하고,
+      관리 편의성을 우선한다면 장기렌트(하 번호판)를 선택하는 것이 일반적입니다.
+    </div>
+  </div>
+
+  <div class="card" id="insurance">
+    <h2 class="section-title">5. 보험·자동차세는 누가 부담?</h2>
+
+    <h3>보험</h3>
+    <p>
+      장기렌트는 렌터카 회사가 차량 보험에 가입하며, 월 렌트비에 보험료가 포함되어 있습니다.
+      이용자는 별도로 자동차 보험을 가입할 필요가 없습니다.
+      단, 사고 발생 시 자기부담금(면책금)이 발생하며, 이를 줄이기 위한 추가 보험 상품(운전자 보험 등)을 별도 가입할 수 있습니다.
+    </p>
+
+    <h3>자동차세</h3>
+    <p>
+      차량이 렌터카 회사 명의로 등록되므로, 자동차세는 렌터카 회사가 부담합니다.
+      이용자는 자동차세 고지서를 받지 않으며, 연간 세금 납부 걱정이 없습니다.
+      단, 이 비용은 월 렌트비에 포함되어 간접적으로 이용자가 부담하는 구조입니다.
+    </p>
+
+    <h3>정비·소모품</h3>
+    <p>
+      일반적으로 기본 소모품(엔진오일, 타이어 등) 교체는 이용자 부담입니다.
+      일부 렌터카 회사는 정기 점검 서비스를 포함한 프리미엄 패키지를 제공하기도 합니다.
+      계약 전 정비 조건을 반드시 확인하세요.
+    </p>
+
+    <table class="compare-table">
+      <tr>
+        <th>항목</th>
+        <th>장기렌트</th>
+        <th>장기리스</th>
+        <th>할부 구매</th>
+      </tr>
+      <tr>
+        <td class="td-left">자동차 보험</td>
+        <td class="badge-good">렌터카사 포함</td>
+        <td class="badge-bad">이용자 직접 가입</td>
+        <td class="badge-bad">이용자 직접 가입</td>
+      </tr>
+      <tr>
+        <td class="td-left">자동차세</td>
+        <td class="badge-good">렌터카사 부담</td>
+        <td class="badge-bad">이용자 부담</td>
+        <td class="badge-bad">이용자 부담</td>
+      </tr>
+      <tr>
+        <td class="td-left">취등록세</td>
+        <td class="badge-good">렌터카사 부담</td>
+        <td class="badge-good">캐피탈사 부담</td>
+        <td class="badge-bad">이용자 부담</td>
+      </tr>
+      <tr>
+        <td class="td-left">정기 점검</td>
+        <td class="badge-mid">조건에 따라 다름</td>
+        <td class="badge-bad">이용자 부담</td>
+        <td class="badge-bad">이용자 부담</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card" id="compare">
+    <h2 class="section-title">6. 렌트 vs 리스 vs 할부 비교</h2>
+
+    <table class="compare-table">
+      <tr>
+        <th>구분</th>
+        <th>장기렌트</th>
+        <th>장기리스</th>
+        <th>할부 구매</th>
+      </tr>
+      <tr>
+        <td class="td-left">소유권</td>
+        <td>렌터카사 (반납)</td>
+        <td>캐피탈사 (만기 인수 가능)</td>
+        <td>구매자 본인</td>
+      </tr>
+      <tr>
+        <td class="td-left">번호판</td>
+        <td class="badge-bad">하(렌터카) 번호판</td>
+        <td class="badge-good">일반 번호판</td>
+        <td class="badge-good">일반 번호판</td>
+      </tr>
+      <tr>
+        <td class="td-left">보험 포함</td>
+        <td class="badge-good">포함</td>
+        <td class="badge-bad">별도 가입</td>
+        <td class="badge-bad">별도 가입</td>
+      </tr>
+      <tr>
+        <td class="td-left">자동차세</td>
+        <td class="badge-good">렌터카사 부담</td>
+        <td class="badge-bad">이용자 부담</td>
+        <td class="badge-bad">이용자 부담</td>
+      </tr>
+      <tr>
+        <td class="td-left">신용 영향</td>
+        <td class="badge-good">금융 부채 미기록</td>
+        <td class="badge-bad">금융 부채 기록</td>
+        <td class="badge-bad">금융 부채 기록</td>
+      </tr>
+      <tr>
+        <td class="td-left">월 납입금</td>
+        <td class="badge-bad">높음 (보험·세금 포함)</td>
+        <td class="badge-mid">중간</td>
+        <td class="badge-good">낮음 (이자만)</td>
+      </tr>
+      <tr>
+        <td class="td-left">관리 편의성</td>
+        <td class="badge-good">높음</td>
+        <td class="badge-mid">중간</td>
+        <td class="badge-bad">모두 직접 관리</td>
+      </tr>
+      <tr>
+        <td class="td-left">사업자 세금 처리</td>
+        <td class="badge-good">렌트비 비용 처리</td>
+        <td class="badge-good">리스료 비용 처리</td>
+        <td class="badge-mid">감가상각비 처리</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card" id="pros-cons">
+    <h2 class="section-title">7. 장기렌트의 장점과 단점</h2>
+
+    <h3>✅ 장점</h3>
+    <div class="success-box">
+      <ul style="padding-left:18px;">
+        <li><strong>관리 편의성 최고:</strong> 보험·세금·등록 등 차량 관련 행정 업무를 렌터카사가 처리합니다.</li>
+        <li><strong>신용 영향 없음:</strong> 금융 대출로 기록되지 않아 다른 대출 한도에 영향이 없습니다.</li>
+        <li><strong>초기 비용 절감:</strong> 취등록세를 부담하지 않아 초기 목돈 부담이 적습니다.</li>
+        <li><strong>사업자 비용 처리:</strong> 렌트비 전액을 사업 경비로 처리 가능합니다.</li>
+        <li><strong>신차 교체 편의:</strong> 계약 종료 후 새 차로 쉽게 교체할 수 있습니다.</li>
+        <li><strong>신용등급 낮아도 가능:</strong> 금융 심사 없이 이용 가능한 경우가 많아 신용도가 낮아도 이용할 수 있습니다.</li>
+      </ul>
+    </div>
+
+    <h3>❌ 단점</h3>
+    <div class="highlight-box">
+      <ul style="padding-left:18px;">
+        <li><strong>하 번호판:</strong> 일반 번호판이 아닌 렌터카 번호판이 발급됩니다.</li>
+        <li><strong>높은 월 납입금:</strong> 보험·세금이 포함되어 리스 대비 월 납입금이 높습니다.</li>
+        <li><strong>소유권 없음:</strong> 계약이 끝나도 차량을 소유할 수 없습니다(일부 회사는 인수 옵션 제공).</li>
+        <li><strong>중도 해지 위약금:</strong> 계약 기간 전 해지 시 상당한 위약금이 발생합니다.</li>
+        <li><strong>사고 처리 복잡:</strong> 렌터카 회사를 통해 보험 처리를 해야 하므로 일반 차량보다 절차가 복잡할 수 있습니다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" id="who-is-it-for">
+    <h2 class="section-title">8. 어떤 사람에게 적합한가?</h2>
+
+    <h3>장기렌트가 유리한 경우</h3>
+    <ul>
+      <li>보험 가입, 세금 납부 등 차량 관련 행정 처리가 번거로운 분</li>
+      <li>신용등급이 낮거나 금융 대출 한도를 유지하고 싶은 분</li>
+      <li>사업자로서 렌트비 전액을 경비 처리하고 싶은 분</li>
+      <li>하 번호판에 거부감이 없는 분</li>
+      <li>주기적으로 신차를 바꾸면서 차량 관리 부담을 줄이고 싶은 분</li>
+    </ul>
+
+    <h3>장기렌트가 불리한 경우</h3>
+    <ul>
+      <li>일반 번호판을 원하는 분</li>
+      <li>차량 소유권을 원하는 분</li>
+      <li>총 비용을 최소화하고 싶은 분 (월 납입금이 리스보다 높음)</li>
+      <li>연간 주행거리가 많아 초과 요금이 우려되는 분</li>
+    </ul>
+  </div>
+
+  <div class="card" id="checklist">
+    <h2 class="section-title">9. 렌트 계약 전 체크리스트</h2>
+    <ul class="step-list">
+      <li>
+        <span class="step-num">1</span>
+        <span class="step-content"><strong>여러 렌터카사 비교:</strong> SK렌터카, 롯데렌터카, AJ렌터카, 현대캐피탈 등 여러 업체의 견적을 비교하세요. 같은 차량도 업체별로 조건이 크게 다릅니다.</span>
+      </li>
+      <li>
+        <span class="step-num">2</span>
+        <span class="step-content"><strong>보험 조건 확인:</strong> 월 렌트비에 포함된 보험의 보장 범위(대물, 대인, 자차 등)와 자기부담금 조건을 반드시 확인하세요.</span>
+      </li>
+      <li>
+        <span class="step-num">3</span>
+        <span class="step-content"><strong>약정 주행거리 설정:</strong> 연간 실제 주행 거리보다 여유 있게 설정하세요. 초과 요금은 km당 수십~수백 원이며 누적 시 큰 금액이 됩니다.</span>
+      </li>
+      <li>
+        <span class="step-num">4</span>
+        <span class="step-content"><strong>총 납입금 비교:</strong> 월 렌트비만 비교하지 말고 (월 렌트비 × 개월 수 + 선납금)의 총 비용을 계산하세요.</span>
+      </li>
+      <li>
+        <span class="step-num">5</span>
+        <span class="step-content"><strong>중도 해지 조건:</strong> 직업 변동, 해외 이주 등 상황 변화 시의 중도 해지 위약금 조건을 계약 전에 확인하세요.</span>
+      </li>
+      <li>
+        <span class="step-num">6</span>
+        <span class="step-content"><strong>정비 조건 확인:</strong> 엔진오일, 타이어 교체 등 소모품 관리가 이용자 부담인지, 포함 서비스인지 계약서에서 확인하세요.</span>
+      </li>
+      <li>
+        <span class="step-num">7</span>
+        <span class="step-content"><strong>만기 후 처리 확인:</strong> 계약 종료 후 차량 반납 조건(주행거리 초과, 외관 손상 기준 등)을 사전에 꼼꼼히 확인하세요.</span>
+      </li>
+    </ul>
+
+    <div class="info-box">
+      💡 <strong>계산기를 먼저 활용해보세요:</strong> 렌터카사 상담 전에 본 사이트의 계산기로 다양한 선납금·기간·조건을 시뮬레이션하여 나에게 맞는 조건의 범위를 파악한 후 협상하면 더 유리한 조건을 얻을 수 있습니다.
+    </div>
+
+    <p style="margin-top:16px;">
+      <a href="index.html" class="cta-btn">🇰🇷 국산차 렌트 계산하기</a>
+      <a href="import.html" class="cta-btn secondary">🌍 수입차 렌트 계산하기</a>
+    </p>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-links">
+      <a href="index.html">국산차 계산기</a>
+      <a href="import.html">수입차 계산기</a>
+      <a href="lease-guide.html">리스 가이드</a>
+      <a href="rent-guide.html">렌트 가이드</a>
+      <a href="about.html">사이트 소개</a>
+      <a href="privacy.html">개인정보처리방침</a>
+      <a href="terms.html">이용약관</a>
+    </div>
+    <p class="footer-notice">
+      본 서비스는 차량 구매·리스·렌트 비교를 위한 참고용 계산기입니다.
+      실제 월 납입금은 금융기관, 캐피탈사, 딜러 조건 및 개인 신용도에 따라 다를 수 있습니다.
+    </p>
+    <p class="footer-copy">© 2025 리스·렌트 계산기. All rights reserved.</p>
+  </div>
+</footer>
+
+</body>
+</html>
